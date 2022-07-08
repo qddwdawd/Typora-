@@ -299,7 +299,7 @@ from sklearn.tree import DecisionTreeClassifier
 import matplotlib.pyplot as plt
 wine = load_wine()
 rfc = RandomForestClassifier(n_estimators = 25)
-rfc_s = cross_val_score(rfc,wine.data,wine.target,cv = 10)
+rfc_s = cross_val_score(rfc,wine.data,wine.target,cv = 10)#交叉验证
 clf = DecisionTreeClassifier()
 clf_s = cross_val_score(clf,wine.data,wine.target,cv = 10)
 plt.plot(range(1,11),rfc_s,label = "RandomForest")
@@ -491,13 +491,63 @@ scaler.inverse_transform(x_std)#使用inverse_transform逆转标准化
 
 ![无量纲化](C:\Users\DELL\Desktop\work\picture\无量纲化.png)
 
-***
+## 回归树案例：用回归拟合正弦曲线
 
-### 2.2缺失值的处理
+~~~python
+import numpy as np
+from sklearn.tree  import DecisionTreeRegressor
+import matplotlib.pyplot as plt
+#创建一条含有噪声的正弦曲线
+rng = np.random.RandomState(1)#生成随机种子
+X = np.sort(5*rng.rand(80,1),axis=0)#生成0-5的x
+y = np.sin(X).ravel()#ravel降维函数
+y[::5]+=3*(0.5 - rng.rand(16))#进行噪声处理
+
+~~~
+
+接下来进行实例化
+
+~~~python
+regr_1 = DecisionTreeRegressor(max_depth=2)
+regr_2 = DecisionTreeRegressor(max_depth=5)
+regr_1.fit(X, y)#将上述所设立的x，y进行拟合，得到实例化模型的具体实例化
+regr_2.fit(X, y)
+~~~
+
+~~~python
+#导入测试集
+X_test = np.arange(0.0,5.0,0.01)[:,np.newaxis]#后边的切片是增维函数
+y_1 = regr_1.predict(X_test)#导入测试集之后得到每个测试样本点的回归或者分类的结果（得到的y）
+y_2 = regr_2.predict(X_test)
+~~~
+
+![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/PC~J71OZ%7B%5BU8NB%7DR_ITDL%5D6.png)
+
+~~~python
+plt.scatter(X, y, s=20, edgecolor="black",c="darkorange", label="data")
+plt.plot(X_test, y_1, color="cornflowerblue",label="max_depth=2", linewidth=2)
+plt.plot(X_test, y_2, color="yellowgreen", label="max_depth=5", linewidth=2)
+plt.xlabel("data")
+plt.ylabel("target")
+plt.title("Decision Tree Regression")
+plt.legend()
+plt.show()
+~~~
+
+![](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/20220707105003.png)
+
+~~~python
+#由图可知，当最大深度为2时较为合理，当为5时明显的是过拟合
+~~~
+
+### 实例：泰坦尼克号幸存者的预测
 
 ~~~python
 import pandas as pd
-data = pd.read_csv(r"C:\Users\DELL\Desktop\sklearn课件完整版\sklearn课件完整版\01 决策树课件数据源码\data.csv",index_col=0)
-data.head()
+from sklraen ,tree import DecisionTreeClassifier
+import matplotlib.pyplot as plt
+form sklearn.model_selection import Grid SearchCV
 ~~~
+
+
 
