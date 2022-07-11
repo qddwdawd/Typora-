@@ -1,4 +1,4 @@
-# 机器学习（sklean）
+机器学习（sklean）
 
 ### 决策树
 
@@ -491,6 +491,8 @@ scaler.inverse_transform(x_std)#使用inverse_transform逆转标准化
 
 ![无量纲化](C:\Users\DELL\Desktop\work\picture\无量纲化.png)
 
+![img](C:/Users/DELL/AppData/Roaming/Tencent/Users/731453367/QQ/WinTemp/RichOle/`DC$N{30I3$THT2RX_@_W7I.png)
+
 ## 回归树案例：用回归拟合正弦曲线
 
 ~~~python
@@ -549,5 +551,435 @@ import matplotlib.pyplot as plt
 form sklearn.model_selection import Grid SearchCV
 ~~~
 
+- 具体见jupyter
+
+## 缺失值的处理：
+
+~~~python
+data.loc[:,"Age"].values.reshape(-1,1).shape #reshape(-1,1)#将数据进行二维化
+结果为：(891,1)
+~~~
+
+利用机器学习进行缺失值处理
+
+~~~python
+from sklearn,impute import SimpleImputer
+imp_mean = SimpleImpiputer()#实例化，默认均值填补
+imp_median = SimpleImputer(strategy = "median")#用中位数填补
+imp_mode = SimpleImputer(strategy = "most_frequent")#用众数填补,数值型和字符型特征都可以
+imp_0 = SimpleImputer(strategy = "constant",fill_value = 0)#用0填补，数值型和字符型都可
+~~~
+
+~~~python
+imp_mean = imp_mean.fit_transform(Age)#fit_transform一步完成调取结果
+imp_median = imp_median.fit_transform(Age)
+imp_0 = imp_0.fit_transform(Age)
+data.loc[:,"Age"] = imp_median
+data.info()
+~~~
+
+缺失值直接填补：
+
+~~~python
+data_.loc[:,"Age"] = ata_.loc[:,"Age"].fillna(data_.loc[:,"Age"].median())
+#.fillna在DataFrame里面直接进行填补
+data_.dropna(axis= 0,inplace = True)#inplace是将处理之后的数据是否替代原数据
+~~~
+
+## 2.3处理分类型特征：编码与哑变量
+
+- 将文字型数据转化成数字型数据:
+
+- preprocessing.LabelEncoder:标签专用，能够将分类转换为分类数值
+
+~~~python
+from sklearn.preprocessing import LabelEncoder
+
+y = data.iloc[:,-1]   #要输入的是标签，不是特征矩阵,所以允许一维
+le = LabelEncoder()  #实例化
+le = le.fit(y)  #导入数据
+label = le.transform(y)#transfrom接口调取结果
+le.classes_  #属性.classes查看标签中究竟有多少类别
+label  #查看获取的结果label
+
+le.fit_transfrom(y)#也可以直接fit——transfrom一步到位
+le.inverse_transform(label)#使用inverse_transfrom可以逆转
+~~~
+
+- 也可使OrdinalEncoder
+
+~~~ python
+from sklearn.preprocessing import OrdinalEncoder
+#接口categores_对应LabelEncoder的接口classes_,一模一样的功能
+data_ = data.copy()
+data_.head()
+OrdinalEncoder().fit(data_.iloc[:,1:-1]).categories_
+data.iloc[:,1:-1] = RrdinalEncoder().fit_transform(data_.iloc[:,1:-1])
+data_.head()
+
+~~~
+
+![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/ZI2MR6PO]35~QP$%@VT1T37.png)
+
+![img](C:/Users/DELL/AppData/Roaming/Tencent/Users/731453367/QQ/WinTemp/RichOle/PF](1ZL2J}_16)4IYY6~N3Q.png)
 
 
+
+![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/ZR9V@65WGH5%7DJHOHKOG%7D%7D%5B7.png)
+
+![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/M`LWGNF_SJA]EC{%Z7{JBKL.png)
+
+**哑变量**
+
+![image-20220710090344065](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710090344065.png)
+
+数据变换之前：
+
+![image-20220710090611179](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710090611179.png)
+
+~~~python
+from sklrearn.preprocessing import OneHotEncoder
+X = data,iloc[:,1:-1]
+enc = OneHotEncoder(categories = 'auto').fit(x)
+result = enc.transform(X).toarray()#把结果转化成二维数组
+result
+~~~
+
+![image-20220710091058380](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710091058380.png)
+
+解释：因为性别有两个哑变量Embarked有三个哑变量
+
+还原之后：
+
+![image-20220710091704251](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710091704251.png)
+
+
+
+~~~python
+重要属性：enc.get_feature_names()#他会告诉你这一列是哪一类
+~~~
+
+![image-20220710091853994](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710091853994.png)
+
+可以将得到的结果拼接在数据后边：
+
+~~~python
+#axis=1，表示跨行进行合并，也就是将量表左右相连，axis=1表示列，列拼接为增加列数，所以是左后相连，axis=0时为行，行拼接为行数相加则量表上下相连
+newdata = pd.concat([data,DataFrame(result)],axis = 1)
+newdata.head()
+~~~
+
+![image-20220710093314113](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710093314113.png)
+
+~~~python
+newdata.drop(["Sex","Embarked"],axis =1,inplace = Ture)#去掉这两列并且替代原数据
+new.data.columns = ["Age","Survivd","Female","Male","Enbarked_C","Enbarked_Q","Embarked_S"]
+newdata.head()
+~~~
+
+![image-20220710093641237](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710093641237.png)
+
+![image-20220710093845831](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710093845831.png)
+
+![image-20220710094043478](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710094043478.png)
+
+## 2.4处理连续型特征：二值化与分段
+
+![image-20220710094446922](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710094446922.png)
+
+~~~python
+#将年龄二值化
+data_2 = data.copy()
+from sklearn.preprocessing import Binarizer
+X = data_2.iloc[:,0].values.reshape(-1,1)#类为特征专用，所以不能使用一维数组，reshape（-1，1）转化为二维数组，且只有一列
+~~~
+
+~~~python
+transformer = Binaeizer(threshold = 38).fit_transform(X)
+transformer
+~~~
+
+![image-20220710095757006](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710095757006.png)
+
+![image-20220710100019530](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710100019530.png)
+
+### 分箱
+
+~~~python
+from sklearn.preprocessing import KBinsDiscretizer
+X = data,iloc[:,0].values.reshape(-1,1)#类为特征专用不能够导入一维
+~~~
+
+
+
+~~~python
+est = KBinsDiscretizer(n_bins = 3,encode = 'ordinal',stratrgy='uniform')
+est.fit_transform(X)
+~~~
+
+![image-20220710101235240](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710101235240.png)
+
+~~~python
+#查看转换后分的箱：变成了一列中的三箱
+set(est.fit_transfrom(X).ravel())#ravel降维操作
+~~~
+
+![image-20220710101549634](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710101549634.png)
+
+~~~python
+est = KBinsDiscretizer(n_bins = 3,encode='onehot',strategy = 'uninform')
+#查看转换后的分的箱：变成了哑变量
+est.fit_transform(X).toarray()#toarray将结果的稀疏矩阵转化成二维数组
+~~~
+
+![image-20220710101625779](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710101625779.png)
+
+## 3. 特征选择feature——selection
+
+跟数据提供者开会
+
+特征选项而第一步，根据我们的目标，用业务常识来选择特征。
+
+![image-20220710145745725](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710145745725.png)
+
+![image-20220710145944133](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710145944133.png)
+
+![image-20220710152013131](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710152013131.png)
+
+~~~python
+import pandas as pd
+data =pd.read_csv(r"E:\Jupyter and pycharm\pythonProject1\jupyter2\digit recognizor.csv")
+X = data.iloc[:,1:]
+y = data.iloc[:,0]
+'''
+维度是指特征的数量
+
+'''
+~~~
+
+~~~python
+X.shape
+data.head()
+~~~
+
+![image-20220710155737239](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710155737239.png)
+
+![image-20220710155756712](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710155756712.png)
+
+~~~python
+from sklearn.fearuew_selection import VaianceThreshold
+selector = VarianceThreshold() #实例化，不填参数默认方差为0
+X_var0 = selector.fit_transfrom(X)#获取删除不合格特征之后的新特征矩阵
+~~~
+
+~~~python
+#也可以直接写成X = VairanceThreshold().fit_transform(X)
+X_var0.shape
+~~~
+
+![image-20220710153137814](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710153137814.png)
+
+~~~python
+import numpy as np
+X.var()#查看每一列方差
+np.median(X.var()) #查看方差中位数
+~~~
+
+~~~python
+X_fsvar = VarianceThreshold(np.median(X.var())).fit_transform(X)
+X_fsvar.shape
+~~~
+
+![image-20220710153923354](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710153923354.png)
+
+
+
+![image-20220710154018740](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710154018740.png)
+
+~~~python
+#若特征是伯努利随机变量，假设p=0.8，即而分类特征中某种分类占到80%以上的时候删除特征
+X_bvar = VarianceThreshold(.8*(1-.8)).fit_transform(X)
+X_bvar.shape
+~~~
+
+![image-20220710154530511](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710154530511.png)
+
+![image-20220710154745357](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710154745357.png)
+
+~~~python
+#KNN vs 随机森林在不同方差过滤效果下的对比
+from sklearn.ensemble import RandomForestClassifier as RFC
+from sklearn.neighbors import KNeighborsClassifier as KNN
+from sklearn.model_selection import cross_val_score
+import numpy as np
+X = data.iloc[:,1:]
+y = data.iloc[:,0]
+X_fsvar = VarianceThreshold(np.median(X.var().values)).fit_transform(X)
+~~~
+
+~~~python
+#======【TIME WARNING：35mins +】======#
+cross_val_score(KNN(),X,y,cv=5).mean()
+#python中的魔法命令，可以直接使用%%timeit来计算运行这个cell中的代码所需的时间
+#为了计算所需的时间，需要将这个cell中的代码运行很多次（通常是7次）后求平均值，因此运行%%timeit的时间会
+远远超过cell中的代码单独运行的时间
+#======【TIME WARNING：4 hours】======#
+%%timeit
+cross_val_score(KNN(),X,y,cv=5).mean()
+~~~
+
+![image-20220710161459451](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710161459451.png)
+
+3.方差过滤之后
+
+~~~python
+#======【TIME WARNING：20 mins+】======#
+cross_val_score(KNN(),X_fsvar,y,cv=5).mean()
+#======【TIME WARNING：2 hours】======#
+%%timeit
+cross_val_score(KNN(),X,y,cv=5).mean()
+~~~
+
+![image-20220710161919402](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710161919402.png)
+
+![image-20220710162013765](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710162013765.png)
+
+**随机森林方差过滤前**
+
+![image-20220710162125489](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710162125489.png)
+
+**随机森林方差过滤后**
+
+![image-20220710162223591](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710162223591.png)
+
+![image-20220710163348854](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710163348854.png)
+
+![image-20220710163547213](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710163547213.png)
+
+3.1.2.1卡方过滤(非负值)
+
+卡方过滤是专门针对离散型标签（即分类问题）的相关性过滤。卡方检验类**feature_selection.chi2**计算每个非负
+
+特征和标签之间的卡方统计量，并依照卡方统计量由高到低为特征排名。再结合**feature_selection.SelectKBest**
+
+这个可以输入”评分标准“来选出前K个分数最高的特征的类，我们可以借此除去最可能独立于标签，与我们分类目
+
+的无关的特征。
+
+另外，如果卡方检验检测到某个特征中所有的值都相同，会提示我们使用方差先进行方差过滤。并且，刚才我们已
+
+经验证过，当我们使用方差过滤筛选掉一半的特征后，模型的表现时提升的。因此在这里，我们使用threshold=中位数时完成的方差过滤的数据来做卡方检验（如果方差过滤后模型的表现反而降低了，那我们就不会使用方差过滤后的数据，而是使用原数据）：
+
+~~~python
+from sklearn.ensemble import RandomForestClassifier as RFC
+from sklearn.model_selection import cross_val_score
+from sklearn.feature_selection import SelectKBest#挑选特征
+from sklearn.feature_selection import chi2  #卡方
+
+
+#假设在这里我一直我需要300个特征
+X_fschi = SelectKBest(chi2, k=300).fit_transform(X_fsvar, y)
+X_fschi.shape
+~~~
+
+![image-20220710172107022](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710172107022.png)
+
+~~~python
+cross_val_score(RFC(n_estimators=10,random_state=0),X_fschi,y,cv=5).mean()
+结果为：0.9333
+~~~
+
+![image-20220710172259244](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710172259244.png)
+
+![image-20220710172357125](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710172357125.png)
+
+~~~python
+#======【TIME WARNING: 5 mins】======#
+%matplotlib inline
+import matplotlib.pyplot as plt
+score = []
+for i in range(390,200,-10):
+    X_fschi = SelectKBest(chi2, k=i).fit_transform(X_fsvar, y)
+    once = cross_val_score(RFC(n_estimators=10,random_state=0),X_fschi,y,cv=5).mean()
+    score.append(once)
+plt.plot(range(350,200,-10),score)
+plt.show()
+~~~
+
+![image-20220710172947218](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710172947218.png)
+
+![image-20220710173315672](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710173315672.png)
+
+### 也可以叫卡方检验筛掉一些特征。
+
+~~~python
+chivalue, pvalues_chi = chi2(X_fsvar,y)
+chivalue#卡方值
+pvalues_chi#P值
+~~~
+
+![image-20220710173703608](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710173703608.png)
+
+![image-20220710173728775](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710173728775.png)
+
+- 由p值可知，所有的之都小于0.05，所以所有特征都相关
+
+~~~python
+#k取多少？我们想要消除所有p值大于设定值，比如0.05或0.01的特征：
+k = chivalue.shape[0] - (pvalues_chi > 0.05).sum()#计算大于设定值的数量
+~~~
+
+## F检验过滤
+
+F检验，又称ANOVA，方差齐性检验，是用来捕捉每个特征与标签之间的线性关系的过滤方法。它即可以做回归也
+
+可以做分类，因此包含**feature_selection.f_classif**（F检验分类）和**feature_selection.f_regression**（F检验回
+
+归）两个类。其中F检验分类用于标签是离散型变量的数据，而F检验回归用于标签是连续型变量的数据。和卡方检验一样，这两个类需要和类**SelectKBest**连用，并且我们也可以直接通过输出的统计量来判断我们到底要
+
+设置一个什么样的K。需要注意的是，F检验在数据服从正态分布时效果会非常稳定，**因此如果使用F检验过滤，我们会先将数据转换成服从正态分布的方式。**F检验的本质是寻找两组数据之间的线性关系，其原假设是”数据不存在显著的线性关系“。它返回F值和p值两个统计量。
+
+~~~python
+from sklearn.feature_selection import f_classif
+F, pvalues_f = f_classif(X_fsvar,y) #返回两个值
+F  #和卡方值类似，不知多少号
+pvalues_f#类似于p值
+~~~
+
+![image-20220710180445453](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710180445453.png)
+
+![image-20220710180530102](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710180530102.png)
+
+~~~python
+k = F.shape[0] - (pvalues_f > 0.05).sum()
+得到 k = 392
+#X_fsF = SelectKBest(f_classif, k=填写具体的k).fit_transform(X_fsvar, y)
+#cross_val_score(RFC(n_estimators=10,random_state=0),X_fsF,y,cv=5).mean()#交叉验证得到结果
+~~~
+
+3.1.2.4互信息法
+
+![image-20220710181050235](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710181050235.png)
+
+~~~python
+from sklearn.feature_selection import mutual_info_classif as MIC
+result = MIC(X_fsvar,y) 
+~~~
+
+![image-20220710203920630](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710203920630.png)
+
+~~~python
+k = result.shape[0] - sum(result <= 0)
+#X_fsmic = SelectKBest(MIC, k=填写具体的k).fit_transform(X_fsvar, y)
+#cross_val_score(RFC(n_estimators=10,random_state=0),X_fsmic,y,cv=5).mean()
+~~~
+
+**3.1.3** **过滤法总结**
+
+到这里我们学习了常用的基于过滤法的特征选择，包括方差过滤，基于卡方，F检验和互信息的相关性过滤，讲解
+
+了各个过滤的原理和面临的问题，以及怎样调这些过滤类的超参数。通常来说，我会建议，先使用方差过滤，然后
+
+使用互信息法来捕捉相关性，不过了解各种各样的过滤方式也是必要的。所有信息被总结在下表，大家自取：
+
+![image-20220710204119659](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710204119659.png)·
