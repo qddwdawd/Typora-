@@ -32,7 +32,7 @@ img=cv2.imread('')
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-csv=pd.read_csv(r"C:\Users\zhang\Documents\Tencent Files\3281939931\FileRecv\data.csv",header=None)#header=None，添加行列索引，如果没有则默认为从文本开始。此时读取的数据含有索引列表为DataFrame的形式。
+csv=pd.read_csv(r"C:\Users\zhang\Documents\Tencent Files\3281939931\FileRecv\data.csv",header=None)#header=None，添加行列索引，如果没有则默认为从文本开始选取索引。此时读取的数据含有索引列表为DataFrame的形式。
 img=np.asarray(csv,dtype=np.float32)#将DataFrame的形式转化为矩阵的形式
 plt.imshow(img,"gray")  #负责对图像进行处理，并显示其格式
 plt.show()#plt.show()则是将plt.imshow()处理后的函数显示出来

@@ -6,9 +6,9 @@
 
 - 本质：对特征进行一系列的提问。
 
-![决策树](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\决策树.png)
+![决策树](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/%E5%86%B3%E7%AD%96%E6%A0%91.png)
 
-![几种不同的树](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\几种不同的树.png)
+![几种不同的树](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/%E5%86%B3%E7%AD%96%E6%A0%91.png)
 
 1. 实例化，建立评估模型对象
 2. 通过模型接口训练模型
@@ -91,11 +91,11 @@ dot_data = tree.export_graphviz(clf #训练过的模型
 graph = graphviz.Source(dot_data)
 ~~~
 
-![运行结果](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\画一棵树.png)
+![运行结果](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/%E7%94%BB%E4%B8%80%E6%A3%B5%E6%A0%91.png)
 
 由运行结果我们可以看出，我们所用的feature_names只用了4个特征，并没有完全使用。这证明决策树在建树的时候，有所取舍，并没有完全使用，所以它是由重要性的排名，我们可以调用clf.feature_importances_来看排名，数值越大越是重要，对这棵树来说有更加的意义。
 
-![clf.feature_impoortance_](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\clf.feature_importance_.png)
+![clf.feature_impoortance_](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/clf.feature_importance_.png)
 
 - 使用[*zip(feature_name,clf.feature_importance_)]将特征名，和特征重要性装订起来,方便查看。
 
@@ -581,7 +581,7 @@ data.info()
 缺失值直接填补：
 
 ~~~python
-data_.loc[:,"Age"] = ata_.loc[:,"Age"].fillna(data_.loc[:,"Age"].median())
+data_.loc[:,"Age"] = data_.loc[:,"Age"].fillna(data_.loc[:,"Age"].median())
 #.fillna在DataFrame里面直接进行填补
 data_.dropna(axis= 0,inplace = True)#inplace是将处理之后的数据是否替代原数据
 ~~~
@@ -673,7 +673,7 @@ newdata.head()
 
 ~~~python
 newdata.drop(["Sex","Embarked"],axis =1,inplace = Ture)#去掉这两列并且替代原数据
-new.data.columns = ["Age","Survivd","Female","Male","Enbarked_C","Enbarked_Q","Embarked_S"]
+newdata.columns = ["Age","Survivd","Female","Male","Enbarked_C","Enbarked_Q","Embarked_S"]
 newdata.head()
 ~~~
 
@@ -721,7 +721,7 @@ est.fit_transform(X)
 
 ~~~python
 #查看转换后分的箱：变成了一列中的三箱
-set(est.fit_transfrom(X).ravel())#ravel降维操作
+set(est.fit_transfrom(X).ravel())#ravel降维操作,set去掉重复值
 ~~~
 
 ![image-20220710101549634](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710101549634.png)
@@ -982,4 +982,861 @@ k = result.shape[0] - sum(result <= 0)
 
 使用互信息法来捕捉相关性，不过了解各种各样的过滤方式也是必要的。所有信息被总结在下表，大家自取：
 
-![image-20220710204119659](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710204119659.png)·
+![image-20220710204119659](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220710204119659.png)·## 3.2嵌入发
+
+![image-20220711152121072](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711152121072.png)
+
+![image-20220711152145866](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711152145866.png)
+
+![image-20220711152623806](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711152623806.png)
+
+![image-20220711153111052](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711153111052.png)
+
+![image-20220711153222298](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711153222298.png)
+
+~~~python
+from sklearn.feature_selection import SelectFromModel
+from sklearn.ensemble import RandomForestClassifier as RFC
+RFC_ = RFC(n_estimators =10,random_state=0)
+X_embedded = SelectFromModel(RFC_,threshold=0.005).fit_transform(X,y) #在这里我只想取出来有限的特征。0.005这个阈值对于有780个特征的数据来说，是非常高的阈值，因为平均每个特征只能够分到大约0.001，feature_importances_，      阈值都是在0~1之间，而780个特征平均每个特征只能够分到1/780的阈值
+X_embedded.shape
+~~~
+
+![image-20220711154350964](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711154350964.png)
+
+~~~python
+#模型的维度明显被降低了
+#同样的，我们也可以画学习曲线来找最佳阈值
+#======【TIME WARNING：10 mins】======#
+import numpy as np
+import matplotlib.pyplot as plt
+RFC_.fit(X,y).feature_importances_
+~~~
+
+![image-20220711155520826](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711155520826.png)
+
+~~~python
+threshold = np.linspace(0,(RFC_.fit(X,y).feature_importances_.max(),20)
+score = []
+for i in threshold:
+    X_embedded = SelectFromModel(RFC_,threshold=i).fit_transform(X,y)
+    once = cross_val_score(RFC_,X_embedded,y,cv=5).mean()
+    score.append(once)
+plt.plot(threshold,score)
+plt.show()
+~~~
+
+![image-20220711160012182](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160012182.png)
+
+![image-20220711160249732](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160249732.png)
+
+~~~python
+X_embedded = SelectFromModel(RFC_,threshold=0.00067).fit_transform(X,y)
+X_embedded.shape
+cross_val_score(RFC_,X_embedded,y,cv=5).mean()
+~~~
+
+![image-20220711160441262](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160441262.png)
+
+和其他调参一样，我们可以在第一条学习曲线后选定一个范围，使用细化的学习曲线来找到最佳值：
+
+~~~python
+#======【TIME WARNING：10 mins】======#
+score2 = []
+for i in np.linspace(0,0.00134,20):
+    X_embedded = SelectFromModel(RFC_,threshold=i).fit_transform(X,y)
+    once = cross_val_score(RFC_,X_embedded,y,cv=5).mean()
+    score2.append(once)
+plt.figure(figsize=[20,5])
+plt.plot(np.linspace(0,0.00134,20),score2)
+plt.xticks(np.linspace(0,0.00134,20))
+plt.show()
+~~~
+
+![image-20220711160558058](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160558058.png)
+
+~~~python
+X_embedded = SelectFromModel(RFC_,threshold=0.000564).fit_transform(X,y)
+X_embedded.shape
+~~~
+
+![image-20220711160710268](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160710268.png)
+
+~~~python
+cross_val_score(RFC_,X_embedded,y,cv=5).mean()
+~~~
+
+![image-20220711160817687](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711160817687.png)
+
+~~~python
+#=====【TIME WARNING：2 min】=====#
+#我们可能已经找到了现有模型下的最佳结果，如果我们调整一下随机森林的参数呢？
+cross_val_score(RFC(n_estimators=100,random_state=0),X_embedded,y,cv=5).mean()
+~~~
+
+![image-20220711161004403](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711161004403.png)
+
+![image-20220711161159068](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711161159068.png)
+
+## **3.3 Wrapper**包装法
+
+包装法也是一个特征选择和算法训练同时进行的方法，与嵌入法十分相似，它也是依赖于算法自身的选择，比如
+
+coef_属性或feature_importances_属性来完成特征选择。但不同的是，我们往往使用一个目标函数作为黑盒来帮
+
+助我们选取特征，而不是自己输入某个评估指标或统计量的阈值。包装法在初始特征集上训练评估器，并且通过
+
+coef_属性或通过feature_importances_属性获得每个特征的重要性。然后，从当前的一组特征中修剪最不重要的
+
+特征。在修剪的集合上递归地重复该过程，直到最终到达所需数量的要选择的特征。区别于过滤法和嵌入法的一次
+
+训练解决所有问题，包装法要使用特征子集进行多次训练，因此它所需要的计算成本是最高的。
+
+![image-20220711162524243](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711162524243.png)
+
+~~~python
+from sklearn.feature_selection import RFE
+RFC_ = RFC(n_estimators =10,random_state=0)
+selector = RFE(RFC_, n_features_to_select=340, step=50).fit(X, y)
+selector.support_.sum()
+~~~
+
+![image-20220711163201199](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711163201199.png)
+
+~~~python
+selector.ranking_  #排在第一位的很多
+~~~
+
+![image-20220711163216774](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711163216774.png)
+
+~~~python
+X_wrapper = selector.transform(X)
+cross_val_score(RFC_,X_wrapper,y,cv=5).mean()
+~~~
+
+![image-20220711163318843](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711163318843.png)
+
+我们也可以对包装法画学习曲线：
+
+~~~python
+#======【TIME WARNING: 15 mins】======#
+score = []
+for i in range(1,751,50):
+    X_wrapper = RFE(RFC_,n_features_to_select=i, step=50).fit_transform(X,y)
+    once = cross_val_score(RFC_,X_wrapper,y,cv=5).mean()
+    score.append(once)
+plt.figure(figsize=[20,5])
+plt.plot(range(1,751,50),score)
+plt.xticks(range(1,751,50))
+plt.show()
+~~~
+
+![image-20220711164335672](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711164335672.png)
+
+![image-20220711164407401](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220711164407401.png)
+
+**3.4** **特征选择总结**
+
+至此，我们讲完了降维之外的所有特征选择的方法。这些方法的代码都不难，但是每种方法的原理都不同，并且都
+
+涉及到不同调整方法的超参数。经验来说，过滤法更快速，但更粗糙。包装法和嵌入法更精确，比较适合具体到算
+
+法去调整，但计算量比较大，运行时间长。当数据量很大的时候，优先使用方差过滤和互信息法调整，再上其他特
+
+征选择方法。使用逻辑回归时，优先使用嵌入法。使用支持向量机时，优先使用包装法。迷茫的时候，从过滤法走
+
+起，看具体数据具体分析。
+
+其实特征选择只是特征工程中的第一步。真正的高手，往往使用特征创造或特征提取来寻找高级特征。在Kaggle之
+
+类的算法竞赛中，很多高分团队都是在高级特征上做文章，而这是比调参和特征选择更难的，提升算法表现的高深
+
+方法。特征工程非常深奥，虽然我们日常可能用到不多，但其实它非常美妙。若大家感兴趣，也可以自己去网上搜
+
+一搜，多读多看多试多想，技术逐渐会成为你的囊中之物。
+
+## sckearn中的降维算法PCA和SVD
+
+### 1.概述
+
+对于**数组和Series**来说，**维度就是功能shape返回的结果，shape中返回了几个数字，就是几维**。
+
+![image-20220716114902984](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716114902984.png)
+
+![image-20220716114925639](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716114925639.png)
+
+![image-20220716114937716](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716114937716.png)
+
+![image-20220716114947497](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716114947497.png)
+
+![image-20220716153345852](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716153345852.png)
+
+![image-20220716153459575](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716153459575.png)
+
+## 2.PCA与SVD
+
+![image-20220716153919574](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716153919574.png)
+
+**2.1** **降维究竟是怎样实现？**
+
+*class* sklearn.decomposition.PCA (*n_components=None*, *copy=True*, *whiten=False*, *svd_solver=’auto’*, *tol=0.0*,
+
+*iterated_power=’auto’*, *random_state=None*)
+
+PCA作为**矩阵分解算法**的核心算法，其实没有太多参数，但不幸的是每个参数的意义和运用都很难，因为几乎每个
+
+参数都涉及到高深的数学原理。为了参数的运用和意义变得明朗，我们来看一组简单的二维数据的降维。
+
+![image-20220716154502101](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716154502101.png)
+
+![image-20220716160659274](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716160659274.png)
+
+注：上述有个错误，应该是x1_*var = （   ） = 2
+
+x2*上的数据均值为0，方差也为0
+
+![image-20220716161246131](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716161246131.png)
+
+![image-20220716161532746](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716161532746.png)
+
+![image-20220716162227736](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716162227736.png)
+
+![image-20220716162439983](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716162439983.png)
+
+![image-20220716162552559](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716162552559.png)
+
+![image-20220716163108871](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716163108871.png)
+
+
+
+## 2.2重要参数n_components
+
+![image-20220716172044033](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716172044033.png)
+
+#### 2.2.1**迷你案例：高维数据的可视化**
+
+~~~python
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.decomposition import PCA
+~~~
+
+~~~python
+iris = load_iris()
+y = iris.target
+X = iris.data
+#作为数组，X是几维？
+X.shape
+#作为数据表或特征矩阵，X是几维？
+import pandas as pd
+pd.DataFrame(X)
+~~~
+
+![image-20220716174459765](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716174459765.png)
+
+![image-20220716174517325](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716174517325.png)
+
+~~~python
+y
+~~~
+
+![image-20220716174625886](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716174625886.png)
+
+~~~python
+#调用PCA
+pca = PCA(n_components=2) #实例化
+pca = pca.fit(X) #拟合模型
+X_dr = pca.transform(X) #获取新矩阵
+X_dr
+#也可以fit_transform一步到位
+#X_dr = PCA(2).fit_transform(X)
+~~~
+
+![image-20220716175632109](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716175632109.png)
+
+#### 4.可视化
+
+~~~python
+#要将三种鸢尾花的数据分布显示在二维平面坐标系中，对应的两个坐标（两个特征向量）应该是三种鸢尾花降维后的
+x1和x2，怎样才能取出三种鸢尾花下不同的x1和x2呢？
+X_dr[y == 0, 0] #这里是布尔索引，看出来了么？
+#要展示三中分类的分布，需要对三种鸢尾花分别绘图
+#可以写成三行代码，也可以写成for循环
+~~~
+
+~~~python
+X_dr[y ==0,0],x_dr[y==0,1]
+~~~
+
+![image-20220716180131627](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716180131627.png)
+
+~~~python
+iris.traget_names
+~~~
+
+![image-20220716180640482](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716180640482.png)
+
+~~~python
+plt.figure()#现在我要画图了，给以我一个画布吧
+plt.scatter(X_dr[y==0, 0], X_dr[y==0, 1], c="red", label=iris.target_names[0])
+plt.scatter(X_dr[y==1, 0], X_dr[y==1, 1], c="black", label=iris.target_names[1])
+plt.scatter(X_dr[y==2, 0], X_dr[y==2, 1], c="orange", label=iris.target_names[2])
+plt.legend()
+plt.title('PCA of IRIS dataset')
+plt.show()
+~~~
+
+![image-20220716180815651](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716180815651.png)
+
+~~~python
+colors = ['red', 'black', 'orange']
+plt.figure()
+for i in [0, 1, 2]:
+    plt.scatter(X_dr[y == i, 0]
+               ,X_dr[y == i, 1]
+               ,alpha=.7  #图像透明度
+               ,c=colors[i]
+               ,label=iris.target_names[i]
+               )
+plt.legend()
+plt.title('PCA of IRIS dataset')
+plt.show()
+~~~
+
+![image-20220716181137316](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716181137316.png)
+
+### 6.探索降维后的数据
+
+~~~python
+#属性explained_variance_，查看降维后每个新特征向量上所带的信息量大小（可解释性方差的大小）
+pca.explained_variance_
+~~~
+
+![image-20220716184955506](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716184955506.png)
+
+~~~python
+#属性explained_variance_ratio_，查看降维后每个新特征向量所占的信息量占原始数据总信息量的百分比
+#又叫做可解释方差贡献率,比较新特征向量的方差与旧特征向量的方差
+pca.explained_variance_ratio_
+#大部分信息都被有效地集中在了第一个特征上
+~~~
+
+![image-20220716185726249](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716185726249.png)
+
+~~~python
+pca.explained_variance_ratio_.sum() #比其原有的特征矩阵，降维后的新的特征矩阵信息量站原始数据总信息量的0.97768，所以说效果比较好，特征原来有4个，现在有两个，但是信息损失非常小
+~~~
+
+![image-20220716185755380](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716185755380.png)
+
+![image-20220716190230452](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716190230452.png)
+
+~~~python
+import numpy
+np.cumsum(pca_line.explained_variance_raitio_)#显示第一个数据，第一个加第二个数，前三个数相加，前四个数相加
+~~~
+
+![image-20220716190541653](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716190541653.png)
+
+7.  **选择最好的n_components**：**累积可解释方差贡献率曲线**
+
+![image-20220716190057370](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716190057370.png)
+
+~~~python
+import numpy as np
+pca_line = PCA().fit(X)
+plt.plot([1,2,3,4],np.cumsum(pca_line.explained_variance_ratio_))
+plt.xticks([1,2,3,4]) #这是为了限制坐标轴显示为整数
+plt.xlabel("number of components after dimension reduction")
+plt.ylabel("cumulative explained variance ratio")
+plt.show()
+~~~
+
+![image-20220716190805085](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716190805085.png)
+
+**2.2.2** **最大似然估计自选超参数**
+
+除了输入整数，n_components还有哪些选择呢？之前我们提到过，矩阵分解的理论发展在业界独树一帜，勤奋智
+
+慧的数学大神Minka, T.P.在麻省理工学院媒体实验室做研究时找出了让PCA用最大似然估计(maximum likelihood
+
+estimation)自选超参数的方法，输入“mle”作为n_components的参数输入，就可以调用这种方法。#自己选超参数。
+
+~~~python
+pca_mle = PCA(n_components="mle")
+pca_mle = pca_mle.fit(X)
+X_mle = pca_mle.transform(X)
+X_mle
+#可以发现，mle为我们自动选择了3个特征
+~~~
+
+![image-20220716192651484](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716192651484.png)
+
+~~~python
+pca_mle.explained_variance_ratio_.sum()
+#得到了比设定2个特征时更高的信息含量，对于鸢尾花这个很小的数据集来说，3个特征对应这么高的信息含量，并不
+#需要去纠结于只保留2个特征，毕竟三个特征也可以可视化。
+~~~
+
+![image-20220716192843073](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716192843073.png)
+
+**2.2.3** **按信息量占比选超参数**
+
+输入[0,1]之间的浮点数，并且让参数svd_solver =='full'，表示希望降维后的总解释性方差占比大于n_components指定的百分比，即是说，希望保留百分之多少的信息量。比如说，如果我们希望保留97%的信息量，就可以输入n_components = 0.97，PCA会自动选出能够让保留的信息量超过97%的特征数量。
+
+~~~python
+pca_f = PCA(n_components=0.97,svd_solver="full") #0.97是所有维度的分数之和
+pca_f = pca_f.fit(X)
+X_f = pca_f.transform(X)
+pca_f.explained_variance_ratio_.sum()
+~~~
+
+![image-20220716194350168](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194350168.png)
+
+![image-20220716194315255](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194315255.png)
+
+~~~python
+pca_f = PCA(n_components=0.99,svd_solver="full")
+pca_f = pca_f.fit(X)
+X_f = pca_f.transform(X)
+pca_f.explained_variance_ratio_.sum()
+~~~
+
+![image-20220716194424152](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194424152.png)
+
+![image-20220716194520239](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194520239.png)
+
+![image-20220716194607240](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194607240.png)
+
+### 2.3 PCA中的SVD
+
+![image-20220716194813474](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716194813474.png)
+
+![image-20220716200820871](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716200820871.png)
+
+~~~python
+PCA(2).fit(X).components_#V（k，n），降维之后的新的特征空间
+~~~
+
+![image-20220716202751875](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716202751875.png)
+
+~~~python
+PCA(2).fit(X).components_.shape
+~~~
+
+![image-20220716202918194](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716202918194.png)
+
+### 2.3.2 重要参数svd_solver与random_state
+
+![image-20220716203821882](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716203821882.png)
+
+![image-20220716203836875](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220716203836875.png)
+
+### 2.3.3重要属性components_
+
+~~~python
+from sklearn.datasets import fetch_lfw_people
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+~~~
+
+~~~python
+faces = fetch_lfw_people(min_faces_per_person=60)#实例化
+~~~
+
+![image-20220717161355322](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717161355322.png)
+
+~~~python
+faces.images.shape
+#怎样理解这个数据的维度？
+faces.data.shape
+#换成特征矩阵之后，这个矩阵是什么样？
+X = faces.data
+~~~
+
+![image-20220717161940330](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717161940330.png)
+
+- 注意：这里和opencv中的img.shape可能有点区别，opencv中的img.shape表示的是一张图片的基本信息，一般的图像为三维数组（34，55，3）这个表示的是这张图片一共有3通道RBG，前两个参数是每一个通道的行列数。而这里（1277，62，47）可能表示的是多张图像，所以第一个参数为有多少张照片，后两个参数才是每个图像的行列数。
+
+#### 3.将图像可视化
+
+~~~python
+#创建画布和子图对象
+fig, axes = plt.subplots(4,5
+                       ,figsize=(8,4)
+                       ,subplot_kw = {"xticks":[],"yticks":[]} #不要显示坐标轴
+                       )
+~~~
+
+![image-20220717163950164](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717163950164.png)
+
+![image-20220717164242519](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717164242519.png)
+
+\#不难发现，axes中的一个对象对应fig中的一个空格
+
+\#我们希望，在每一个子图对象中填充图像（共24张图），因此我们需要写一个在子图对象中遍历的循环
+
+\#二维结构，可以有两种循环方式，一种是使用索引，循环一次同时生成一列上的三个图
+
+\#另一种是把数据拉成一维，循环一次只生成一个图
+
+\#在这里，究竟使用哪一种循环方式，是要看我们要画的图的信息，储存在一个怎样的结构里
+
+\#我们使用 子图对象.imshow 来将图像填充到空白画布上
+
+\#而imshow要求的数据格式必须是一个(m,n)格式的矩阵，即每个数据都是一张单独的图
+
+\#因此我们需要遍历的是faces.images，其结构是(1277, 62, 47)
+
+\#要从一个数据集中取出24个图，明显是一次性的循环切片[i,:,:]来得便利
+
+\#因此我们要把axes的结构拉成一维来循环
+
+~~~python
+#创建画布和子图对象
+fig, axes = plt.subplots(4,5
+                       ,figsize=(8,4)
+                       ,subplot_kw = {"xticks":[],"yticks":[]} #不要显示坐标轴
+                       )
+axes[0][0].imshow(faces.images[0,:,:])
+~~~
+
+![image-20220717164959180](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717164959180.png)
+
+~~~python
+[*axes.flat]#进行降维，用[*]打开惰性对象
+~~~
+
+~~~python
+len([*axes.flat])#结果为20
+~~~
+
+~~~python
+[*enumerate(axes.flat)]#加上索引，并且每个对象都变为了元组
+~~~
+
+![image-20220717165402962](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717165402962.png)
+
+~~~python
+#创建画布和子图对象
+fig, axes = plt.subplots(4,5
+                       ,figsize=(8,4)
+                       ,subplot_kw = {"xticks":[],"yticks":[]} #不要显示坐标轴
+                       )
+#填充图像
+for i, ax in enumerate(axes.flat):
+    ax.imshow(faces.images[i,:,:] 
+             ,cmap="gray") #选择色彩的模式
+~~~
+
+![image-20220717165905158](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717165905158.png)
+
+#### 4.建模降维，**提取新特征空间矩阵**
+
+~~~python
+X = faces.data
+~~~
+
+![image-20220717170606512](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717170606512.png)
+
+~~~python
+pca = PCA(150).fit(X)
+V = pca.components_#V(k,n)
+~~~
+
+~~~python
+V.shape
+~~~
+
+![image-20220717171554483](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717171554483.png)
+
+接下来将V可视化，V是用来映射的新向量空间，V*原有的特征矩阵就是新的特征矩阵，V就相当于是骨头，而原特征矩阵为血肉。
+
+~~~python
+#创建画布和子图对象
+fig, axes = plt.subplots(3,8,figsize=(8,4),subplot_kw = {"xticks":[],"yticks":[]})
+#填充图像
+for i, ax in enumerate(axes.flat):
+    ax.imshow(V[i,:].reshape(62,47) ,cmap="gray") #选择色彩的模式
+~~~
+
+![image-20220717172353091](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220717172353091.png)
+
+这张图稍稍有一些恐怖，但可以看出，比起降维前的数据，新特征空间可视化后的人脸非常模糊，这是因为原始数
+
+据还没有被映射到特征空间中。但是可以看出，整体比较亮的图片，获取的信息较多，整体比较暗的图片，却只能
+
+看见黑漆漆的一块。在比较亮的图片中，眼睛，鼻子，嘴巴，都相对清晰，脸的轮廓，头发之类的比较模糊。
+
+这说明，新特征空间里的特征向量们，大部分是"五官"和"亮度"相关的向量，所以新特征向量上的信息肯定大部分
+
+是由原数据中和"五官"和"亮度"相关的特征中提取出来的。到这里，我们通过可视化新特征空间V，解释了一部分降维后的特征：虽然显示出来的数字看着不知所云，但画出来的图表示，这些特征是和”五官“以及”亮度“有关的。这也再次证明了，PCA能够将原始数据集中重要的数据进行聚集。
+
+### 2.4重要接口inverse_transform
+
+~~~python
+from sklearn.datasets import fetch_lfw_people
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+~~~
+
+~~~python
+faces = fetch_lfw_people(min_faces_per_person=60)
+faces.images.shape
+#怎样理解这个数据的维度？
+faces.data.shape
+#换成特征矩阵之后，这个矩阵是什么样？
+X = faces.data
+pca = PCA(150)
+X_dr = pca.fit_transform(X)
+X_dr.shape
+X_inverse = pca.inverse_transform(X_dr)
+X_inverse.shape
+~~~
+
+~~~python
+X_inverse = pca.inverse_transform(X_dr)
+X_inverse.shape
+~~~
+
+![image-20220718092918499](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718092918499.png)
+
+~~~python
+fig, ax = plt.subplots(2,10,figsize=(10,2.5)
+                     ,subplot_kw={"xticks":[],"yticks":[]}
+                     )
+#和2.3.3节中的案例一样，我们需要对子图对象进行遍历的循环，来将图像填入子图中
+#那在这里，我们使用怎样的循环？
+#现在我们的ax中是2行10列，第一行是原数据，第二行是inverse_transform后返回的数据
+#所以我们需要同时循环两份数据，即一次循环画一列上的两张图，而不是把ax拉平
+for i in range(10):
+    ax[0,i].imshow(faces.image[i,:,:],cmap="binary_r")
+    ax[1,i].imshow(X_inverse[i].reshape(62,47),cmap="binary_r")
+~~~
+
+![image-20220718093731779](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718093731779.png)
+
+可以明显看出，这两组数据可视化后，由降维后再通过inverse_transform转换回原维度的数据画出的图像和原数
+
+据画的图像大致相似，但原数据的图像明显更加清晰。这说明，inverse_transform并没有实现数据的完全逆转。
+
+这是因为，在降维的时候，部分信息已经被舍弃了，X_dr中往往不会包含原数据100%的信息，所以在逆转的时
+
+候，即便维度升高，原数据中已经被舍弃的信息也不可能再回来了。所以，**降维不是完全可逆的**。
+
+Inverse_transform的功能，是基于X_dr中的数据进行升维，将数据重新映射到原数据所在的特征空间中，而并非
+
+恢复所有原有的数据。但同时，我们也可以看出，降维到300以后的数据，的确保留了原数据的大部分信息，所以
+
+图像看起来，才会和原数据高度相似，只是稍稍模糊罢了。
+
+**2.4.2** **迷你案例：用PCA做噪音过滤**
+
+降维的目的之一就是希望抛弃掉对模型带来负面影响的特征，而我们相信，带有效信息的特征的方差应该是远大于
+
+噪音的，所以相比噪音，有效的特征所带的信息应该不会在PCA过程中被大量抛弃。inverse_transform能够在不
+
+恢复原始数据的情况下，将降维后的数据返回到原本的高维空间，即是说能够实现”保证维度，但去掉方差很小特
+
+征所带的信息“。利用inverse_transform的这个性质，我们能够实现噪音过滤。
+
+~~~python
+from sklearn.datasets import load_digits
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+~~~
+
+![image-20220718100356539](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718100356539.png)
+
+~~~python
+
+~~~
+
+![image-20220718100500092](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718100500092.png)
+
+~~~python
+def plot_digits(data):
+    fig, axes = plt.subplots(4,10,figsize=(10,4)
+                           ,subplot_kw = {"xticks":[],"yticks":[]}
+                           )
+    for i, ax in enumerate(axes.flat):
+        ax.imshow(data[i].reshape(8,8),cmap="binary")
+~~~
+
+![image-20220718100646881](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718100646881.png)
+
+~~~python
+plot_digits(digits.data)
+~~~
+
+![image-20220718101207958](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718101207958.png)
+
+4.为数据加上噪音：
+
+~~~python
+import numpy as np
+rng = np.random.RandomState(42) #规定numpy中的随机模式
+#在指定的数据集中，随机抽取服从正态分布的数据
+#两个参数，分别是指定的数据集，和抽取出来的正太分布的方差
+noisy = np.random.normal(digits.data,2)
+plot_digits(noisy)
+~~~
+
+![image-20220718101808190](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718101808190.png)
+
+![image-20220718101824671](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718101824671.png)
+
+- 接下来开始降噪：
+
+~~~python
+5. 降维
+pca = PCA(0.5，svd_solver = "full").fit(noisy)
+X_dr = pca.transform(noisy) #降维之后的数据看不懂，但是带有原始数据的特征
+X_dr.shape
+~~~
+
+![image-20220718102108348](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718102108348.png)
+
+![image-20220718102121982](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718102121982.png)
+
+~~~python
+6. 逆转降维结果，实现降噪
+without_noise = pca.inverse_transform(X_dr)#转回原有的空间，因为必须是8*8格式才是这种图像，尽管与原来数据有些差别，但是实质上还是比较相似的。
+plot_digits(without_noise)
+~~~
+
+![image-20220718102320679](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718102320679.png)
+
+![image-20220718102359918](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718102359918.png)
+
+### 2.5 重要接口，参数和属性总结
+
+到现在，我们已经完成了对PCA的讲解。我们讲解了重要参数参数n_components，svd_solver，random_state，讲解了三个重要属性：components_, explained_variance_以及explained_variance_ratio_，无数次用到了接口fifit，transform，fifit_transform，还讲解了与众不同的重要接口inverse_transform。所有的这些内容都可以被总结。
+
+![image-20220718102734312](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718102734312.png)
+
+### **3** **案例：****PCA对手写数字数据集的降维**
+
+~~~python
+from sklearn.decomposition import PCA
+from sklearn.ensemble import RandomForestClassifier as RFC
+from sklearn.model_selection import cross_val_score
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+~~~
+
+~~~python
+data = pd.read_csv(r"C:\work\learnbetter\micro-class\week 3 Preprocessing\digit 
+recognizor.csv") 
+X = data.iloc[:,1:]
+y = data.iloc[:,0] X.shape
+~~~
+
+![image-20220718132226886](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718132226886.png)
+
+![image-20220718132236215](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718132236215.png)
+
+3. **画累计方差贡献率曲线，找最佳降维后维度的范围**
+
+~~~python
+pca_line = PCA().fit(X) #参数默认为min（x.shape），通俗来讲就是取全部特征
+plt.figure(figsize=[20,5])
+plt.plot(np.cumsum(pca_line.explained_variance_ratio_))#cumsum是将结果累计加和例如：[1,2,3,4]它会返回[1，3，6，10]
+plt.xlabel("number of components after dimension reduction")
+plt.ylabel("cumulative explained variance ratio")
+plt.show()
+~~~
+
+![image-20220718133146782](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718133146782.png)
+
+4. **降维后维度的学习曲线，继续缩小最佳维度的范围**
+
+~~~python
+score = []
+for i in range(1,101,10):
+    X_dr = PCA(i).fit_transform(X)
+    once = cross_val_score(RFC(n_estimators=10,random_state=0)
+                           ,X_dr,y,cv=5).mean()
+    score.append(once)
+plt.figure(figsize=[20,5])
+plt.plot(range(1,101,10),score)
+plt.show()
+~~~
+
+![image-20220718133852607](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718133852607.png)
+
+~~~python
+score = []
+for i in range(10,25):
+    X_dr = PCA(i).fit_transform(X)
+    once = cross_val_score(RFC(n_estimators=10,random_state=0)
+                           ,X_dr,y,cv=5).mean()
+    score.append(once)
+plt.figure(figsize=[20,5])
+plt.plot(range(1,101,10),score)
+plt.show()
+~~~
+
+![image-20220718134753666](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718134753666.png)
+
+~~~python
+X_dr = PCA(23).fit_transform(X)
+~~~
+
+![image-20220718134901026](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718134901026.png)
+
+![image-20220718134926809](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718134926809.png)
+
+~~~python
+#======【TIME WARNING:1mins 30s】======#
+cross_val_score(RFC(n_estimators=100,random_state=0),X_dr,y,cv=5).mean()
+~~~
+
+![image-20220718135113489](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718135113489.png)
+
+7. **突发奇想，特征数量已经不足原来的**3%**，换模型怎么样？**
+
+在之前的建模过程中，因为计算量太大，所以我们一直使用随机森林，但事实上，我们知道KNN的效果比随机森林更好，KNN在未调参的状况下已经达到96%的准确率，而随机森林在未调参前只能达到93%，这是模型本身的限制带来的，这个数据使用KNN效果就是会更好。现在我们的特征数量已经降到不足原来的3%，可以使用KNN了吗？
+
+~~~python
+from sklearn.neighbors import KNeighborsClassifier as KNN
+cross_val_score(KNN(),X_dr,y,cv=5).mean()
+~~~
+
+![image-20220718135412269](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718135412269.png)
+
+
+
+~~~python
+score = []
+for i in range(10):
+    X_dr = PCA(21).fit_transform(X)
+    once = cross_val_score(KNN(i+1),X_dr,y,cv=5).mean()
+    score.append(once)
+plt.figure(figsize=[20,5])
+plt.plot(range(10),score)
+plt.show()
+~~~
+
+![image-20220718135835282](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718135835282.png)
+
+![image-20220718135907076](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718135907076.png)
+
+综上，当K等于3的时候效果最好。
+
+**定下超参数后，模型效果如何，模型运行时间如何？**
+
+~~~python
+#=======【TIME WARNING: 3mins】======#
+%%timeit
+cross_val_score(KNN(3),X_dr,y,cv=5).mean()
+~~~
+
+
+
+
+

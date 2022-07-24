@@ -1,16 +1,49 @@
-# Flask
+# PyQt5
 
-![image-20220709123850948](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220709123850948.png)
 
-![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/E6PRULIOQ5W%5D45@DAGOBFB2.png)
 
-![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/J%$}9UBN3B{[72WA3KV[%AR.png)
+#### 开发第一个基于PyQt5的桌面应用
 
-浏览器向服务器发送了一些请求，然后服务器给了浏览器一些数据，然后他把数据放到网页上显示了出来，所以不用爬网页，应该得到向后台拿数据的请求。
+#### 必须使用两个类：QApplication,和QWidget。都在PyQt5.QtWidgets
 
-![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/W}~]94{68NJI~{A]]HC%Z%T.png)
+~~~python
+import sys
+from PyQt5.QtWidgets import QApplication, QWidget
 
-### JSON
+if __name__ == '__main__':
+    # 创建QApplication类的实例
+    app = QApplication(sys.argv)  # 用来获得Linux参数
+    # 创建一个窗口
+    w = QWidget()
+    # 设置窗口的尺寸
+    w.resize(400, 200)
+    # 移动窗口
+    w.move(300, 300)
 
-![img](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/%5D%7BP%7D$P1UZ5~E9EVD348X5DJ.png)
+    # 设置窗口的标题
+    w.setWindowTitle('第一个基于PyQt5的桌面应用')
+    # 显示窗口
+    w.show()
+
+    # 进入程序的主循环，并通过exit函数确保主循环安全结束
+    sys.exit(app.exec_())
+~~~
+
+
+
+## Qt_Designer
+
+![image-20220715195940017](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220715195940017.png)
+
+垂直布局：
+
+Vertical Layout
+
+![image-20220715201108548](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220715201108548.png)
+
+
+
+
+
+
 

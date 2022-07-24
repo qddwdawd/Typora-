@@ -226,7 +226,7 @@ class GrandFather:
         pass
     pass
 class Father(GrandFather):
-    def rat(self):
+    def eat(self):
         print("吃的")  #因为父类中已经存在这个方法，在这里相当于方法重写[方法覆盖了]
     pass
 class Son(Father):
@@ -318,7 +318,7 @@ class Dog:
 class kejiquan(Dog):
     def __init__(self,name,color):
          super().__init__(name,color)
-         self.height = 90
+         self.height = 90屁都
          self.weight = 70
     def bark(self):
          print("叫得很凶")

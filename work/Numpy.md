@@ -535,3 +535,17 @@ c
  [155 166]]
 ~~~
 
+### groupby
+
+![image-20220718154846516](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718154846516.png)
+
+![image-20220718154934557](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718154934557.png)
+
+![image-20220718155019436](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718155019436.png)
+
+![image-20220718155702515](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718155702515.png)
+
+![image-20220718155906924](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718155906924.png)
+
+![image-20220718160106412](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220718160106412.png)
+
