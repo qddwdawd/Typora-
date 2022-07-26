@@ -31,11 +31,11 @@ print(t3)
 
 - 结果为：
 
-![pandas结果](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas的Series.png)
+![pandas结果](C:\Users\DELL\Desktop\work\picture\pandas的Series.png)
 
 #### Serier切片和索引：
 
-![切片和索引](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas切片和索引.png)
+![切片和索引](C:\Users\DELL\Desktop\work\picture\pandas切片和索引.png)
 
 - 取多行：t3[2:],t3[1,2]
 
@@ -43,7 +43,7 @@ print(t3)
 
 ##### pandas的index
 
-![index](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas的index.png)
+![index](C:\Users\DELL\Desktop\work\picture\pandas的index.png)
 
 ***
 
@@ -56,7 +56,7 @@ df = pd.read_csv("./diabetes (2).csv") #表示读取当前文件夹下的diabete
 
 运行结果：
 
-![运行结果](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas 的pd,read_csv.png)
+![运行结果](C:\Users\DELL\Desktop\work\picture\pandas 的pd,read_csv.png)
 
 ***
 
@@ -69,7 +69,7 @@ pd.DataFrame(np.arange(12).reshape(3,4))
 
 运行结果：
 
-![pandas的DataFrame](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas的Data.Frame.png)
+![pandas的DataFrame](C:\Users\DELL\Desktop\work\picture\pandas的Data.Frame.png)
 
 - index表示行索引，index ，axis = 0,表示的是第一列，取每一行的第一个
 - columns表示列索引，columns ,axis = 1,表示的是第一行，取每一列的第一个
@@ -85,7 +85,7 @@ d1 = {"name":["xiaoming","xiaogang"],"age":[20,32],"tel":[10080,10086]}
 pd.DataFrame(d1)
 ~~~
 
-![运行结果](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas 的DataFrame的字典操作.png)
+![运行结果](C:\Users\DELL\Desktop\work\picture\pandas 的DataFrame的字典操作.png)
 
 ~~~python
 d2 =[ {"name":"xiaohong","age":32,"tel":10000},{"name":"xiaoming","age":20,"tel":10086},{"name":"xiaogang","age":40}]
@@ -95,7 +95,7 @@ print(t1)
 
 - DataFrame的基础属性：
 
-![DataFrame的基本属性](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\DataFrame的基本属性.png)
+![DataFrame的基本属性](C:\Users\DELL\Desktop\work\picture\DataFrame的基本属性.png)
 
 - 排序
 
@@ -108,20 +108,20 @@ df.sort_values(by="Count_AnimalName")
 - 方括号写数组表示取行，对行进行操作
 - 写字符串，表示的取列索引，对列进行操作 
 
-![pandas取行取列操作](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas取行取列操作.png)
+![pandas取行取列操作](C:\Users\DELL\Desktop\work\picture\pandas取行取列操作.png)
 
 实际操作：
 
-![实际操作](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas取行列实际操作.png)
+![实际操作](C:\Users\DELL\Desktop\work\picture\pandas取行列实际操作.png)
 
 取多行多列操作：
 
-![多行多列](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\DataFrame多行多列操作.png)
+![多行多列](C:\Users\DELL\Desktop\work\picture\DataFrame多行多列操作.png)
 
 - df.loc 通过**标签**索引行数据
 - df.iloc通过**位置**获取行数据
 
-![通过iloc位置索引](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\pandas的DataFrame中的iloc.png)
+![通过iloc位置索引](C:\Users\DELL\Desktop\work\picture\pandas的DataFrame中的iloc.png)
 
 - 索引之后就可以进行赋值。
 

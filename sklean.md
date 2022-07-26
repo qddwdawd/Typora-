@@ -43,7 +43,7 @@ Criterion这个参数正是用来决定不纯度的计算方法，sklearn提供�
 
 2）输入“gini'",使用基尼系数（Gini impurity）
 
-![criterion](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\criterion.png)
+![criterion](C:\Users\DELL\Desktop\work\picture\criterion.png)
 
 - 比起基尼系数，信息熵对不纯度更加敏感，对不纯度的惩罚最强。但是在实际使用中，信息熵和基尼系数的效果基本相同。信息上的计算比基尼系数缓慢一些，因为基尼系数的计算不涉及对数。另外，因为信息熵比基尼系数更加敏感，所以信息熵作为指标时，决策树生长会更加”精细“，因此对于高维数据或者噪声很多的数据，信息熵往往会过拟合，基尼系数在这种情况下效果往往会比较好。当然，这不是绝对的。
 
@@ -51,7 +51,7 @@ Criterion这个参数正是用来决定不纯度的计算方法，sklearn提供�
 - 维度低，数据比较清晰的时候，信息熵和基尼系数没区别
 - 当决策树的拟合程度不够的时候，使用信息熵两个都是是，不好就换另一个
 
-![决策树的基本流程](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\决策树基本流程.png)
+![决策树的基本流程](C:\Users\DELL\Desktop\work\picture\决策树基本流程.png)
 
 知道没有更多的特征可用，或者整体的不纯度指标已经最优化。
 
@@ -99,7 +99,7 @@ graph = graphviz.Source(dot_data)
 
 - 使用[*zip(feature_name,clf.feature_importance_)]将特征名，和特征重要性装订起来,方便查看。
 
-![*zip(feature.name,clf.feature_importance_)](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\[zip(feature.name,clf.feature_importance).png)
+![*zip(feature.name,clf.feature_importance_)](C:\Users\DELL\Desktop\work\picture\[zip(feature.name,clf.feature_importance).png)
 
 ***
 
@@ -202,7 +202,7 @@ plt.legend()
 plt.show()
 ~~~
 
-![max_depth剪枝方法](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\决策树的max_depth剪枝方法.png)
+![max_depth剪枝方法](C:\Users\DELL\Desktop\work\picture\决策树的max_depth剪枝方法.png)
 
 - 剪枝参数不一定能够提升模型在测试集上的表现，调参没有绝对的答案，一切得看数据本身。
 
@@ -235,7 +235,7 @@ clf.predict(Xtext)#返回每个测试样本的分类/回归结果(及返回标�
 
 - sklearn中的集成算法模块ensemble
 
-![随机森林](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\集成算法(随机森林).png)
+![随机森林](C:\Users\DELL\Desktop\work\picture\集成算法(随机森林).png)
 
 - 集成算法中，有一半以上都是树的集成模型，可以想见决策树在集成中必定是有很好的效果。在这堂课中，我们会以随机森林为例，慢慢为大家揭开集成算法的神秘面纱。
 
@@ -310,7 +310,7 @@ plt.show()
 
 
 
-![DecisionTreeClassfier与RandomTreeClassfier](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\DecisionTreeclassfier与RandomForest.png)
+![DecisionTreeClassfier与RandomTreeClassfier](C:\Users\DELL\Desktop\work\picture\DecisionTreeclassfier与RandomForest.png)
 
 - 从上图可以看出，在拟合效果上，随机森林比决策树运行要好得多。
 
@@ -332,7 +332,7 @@ plt.legend()
 plt.show()
 ~~~
 
-![十组数据对比](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\十组数据对比.png)
+![十组数据对比](C:\Users\DELL\Desktop\work\picture\十组数据对比.png)
 
 - 交叉验证：cross_val_score
 
@@ -356,7 +356,7 @@ rfc.predict(Xtest)#predict返回每个测试样本的分类/回归结果
 rfc.predict_proba(Xtest)
 ~~~
 
-![recdict_proba](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\这是predict_proda的运行结果.png)
+![recdict_proba](C:\Users\DELL\Desktop\work\picture\这是predict_proda的运行结果.png)
 
 ### 2.3调参
 
@@ -364,11 +364,11 @@ rfc.predict_proba(Xtest)
 
 在机器学习中，我们用来衡量模型在未知数据上的准确率的指标，叫做泛化误差。
 
-![随机森林泛化误差]()![随即森林泛化误差](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\随即森林泛化误差.png)
+![随机森林泛化误差]()![随即森林泛化误差](C:\Users\DELL\Desktop\work\picture\随即森林泛化误差.png)
 
-![泛化误差之随机森林](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\随机森林之泛化误差.png)
+![泛化误差之随机森林](C:\Users\DELL\Desktop\work\picture\随机森林之泛化误差.png)
 
-![调参](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\调参.png)
+![调参](C:\Users\DELL\Desktop\work\picture\调参.png)
 
 ### 5.实例：随机森林在乳腺癌数据上的调参
 
@@ -572,7 +572,7 @@ imp_0 = SimpleImputer(strategy = "constant",fill_value = 0)#用0填补，数值�
 
 ~~~python
 imp_mean = imp_mean.fit_transform(Age)#fit_transform一步完成调取结果
-imp_median = imp_median.fit_transform(Age)
+imp_median = imp_median.fit_transform(Age)da't
 imp_0 = imp_0.fit_transform(Age)
 data.loc[:,"Age"] = imp_median
 data.info()

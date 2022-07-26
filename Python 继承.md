@@ -59,7 +59,7 @@
 
   当在某个作用域下面没有被使用，或者被引用的情况下，解析器会自动地调用 --del--函数来释放内存空间。
 
-  ![del函数的使用](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\del函数的使用.png)  如图所示，当再加一个input函数时，系统会等待你输入，而在等待的过程中，代码并不会结束，所以del函数尚未执行，因为他不知道你所创造的cat实例对象是否还需要使用，所以并未销毁cat。
+  ![del函数的使用](C:\Users\DELL\Desktop\work\picture\del函数的使用.png)  如图所示，当再加一个input函数时，系统会等待你输入，而在等待的过程中，代码并不会结束，所以del函数尚未执行，因为他不知道你所创造的cat实例对象是否还需要使用，所以并未销毁cat。
 
 - 可以手动删除对象，用del 函数来实现。
 
@@ -80,7 +80,7 @@ print(cat.name)
 
 #### 析构方法总结
 
-![del函数的总结](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\del函数的总结.png)
+![del函数的总结](C:\Users\DELL\Desktop\work\picture\del函数的总结.png)
 
 # 继承
 
@@ -139,7 +139,7 @@ class 子类(父类名)
 
 - 多继承概念
 
-![多继承的概念](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\多继承的概念.png)
+![多继承的概念](C:\Users\DELL\Desktop\work\picture\多继承的概念.png)
 
 ~~~python
 class shenxian:
@@ -239,7 +239,7 @@ son.eat()
 
 - 如果在继承父类的过程中，父类中有init的实例属性构造方法， 而子类中没有init的实例属性构造方法，程序会自动报错如下图：
 
-![init实例属性](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\重写父类init的构造实例属性的方法1.png)
+![init实例属性](C:\Users\DELL\Desktop\work\picture\重写父类init的构造实例属性的方法1.png)
 
 ~~~python
 #如果你调用
@@ -249,7 +249,7 @@ kj.bark()
 ~~~
 
 - 重写父类的构造方法--init--（）
-- ![重写父类的init](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\重写父类的init构造实例属性的方法2.png)
+- ![重写父类的init](C:\Users\DELL\Desktop\work\picture\重写父类的init构造实例属性的方法2.png)
 
 以上的在子类中同时定义一个构造方法(实例属性)，它是属于重写父类的方法，当在子类中重写了init之后，便不能再调用父类中的init方法的内容。
 

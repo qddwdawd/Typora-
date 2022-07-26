@@ -1,6 +1,6 @@
 # python进制转换
 
-![python进制转换](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\python进制转换.png)
+![python进制转换](C:\Users\DELL\Desktop\work\picture\python进制转换.png)
 
 ### 2进制转换成其他进制：
 

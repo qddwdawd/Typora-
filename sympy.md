@@ -8,7 +8,7 @@ import sympy as sp
 
 求不定积分：
 
-![不定积分](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\不定积分.png)
+![不定积分](C:\Users\DELL\Desktop\work\picture\不定积分.png)
 
 1. 表示自变量及积分对象
 

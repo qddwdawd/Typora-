@@ -61,7 +61,7 @@ value_count的用法：
 
 - 例如：(批量统计)
 
-- ![图标的value](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\图表values的用法.png)
+- ![图标的value](C:\Users\DELL\Desktop\work\picture\图表values的用法.png)
 
 - ~~~python
   data['Unit Name'].value_counts()

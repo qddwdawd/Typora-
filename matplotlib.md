@@ -85,7 +85,7 @@ plt.plot(x,y)
 plt.show()
 ~~~
 
-![练习题](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\练习1.png)
+![练习题](C:\Users\DELL\Desktop\work\picture\练习1.png)
 
 - 补充：
 
@@ -130,7 +130,7 @@ plt.plot(x,y)
 plt.show()
 ~~~
 
-![练习2](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\练习2.png)
+![练习2](C:\Users\DELL\Desktop\work\picture\练习2.png)
 
 ### 设置中文字体
 
@@ -204,7 +204,7 @@ plt.show()
 
 ***
 
-![案例1](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\案例1.png)
+![案例1](C:\Users\DELL\Desktop\work\picture\案例1.png)
 
 ## 绘制网格
 
@@ -237,7 +237,7 @@ plt.plot(x_1,y_1)
 
 图像如下：
 
-![两条线的图像](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\绘制两条折线.png)
+![两条线的图像](C:\Users\DELL\Desktop\work\picture\绘制两条折线.png)
 
 #### 在图像上标注
 
@@ -259,7 +259,7 @@ plt.plot(x,y_2, label ='同桌',color = 'c')#第二个c是蓝色
 
 - 参考表
 
-![参考表](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\绘制颜色matplotlib.png)
+![参考表](C:\Users\DELL\Desktop\work\picture\绘制颜色matplotlib.png)
 
 ##### 自己设置线条类型
 
@@ -306,7 +306,7 @@ plt.title = ('气温散点图')
 plt.show()
 ~~~
 
-![绘制散点图](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\绘制散点图.png)
+![绘制散点图](C:\Users\DELL\Desktop\work\picture\绘制散点图.png)
 
 fig = plt.figure(figsize(4,5))中的figsize是表示你画的图的大小，4表示宽度，5表示高度
 

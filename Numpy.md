@@ -66,7 +66,7 @@ t8 = np.round(t7,2)  #保留两位小数
 print(t8)
 ~~~
 
-![numpy的运行结果](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy的保留两位小数.png)
+![numpy的运行结果](C:\Users\DELL\Desktop\work\picture\numpy的保留两位小数.png)
 
 #### 数组的形状
 
@@ -83,7 +83,7 @@ t2.shape #结果为(2,3) ,表示有两行，4列的**矩阵**
 
 - 以上代码的t1为一维数组，t2为二维数组
 
-![numpy的数组类型](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy的数组类型.png)
+![numpy的数组类型](C:\Users\DELL\Desktop\work\picture\numpy的数组类型.png)
 
 - reshape修改数组形状
 
@@ -111,7 +111,7 @@ t5 = np.arange(24).reshape((2,3,4))
 
 - t5.reshap((4,6))的运行结果
 
-![reshape](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy的reshape.png)
+![reshape](C:\Users\DELL\Desktop\work\picture\numpy的reshape.png)
 
 - 注意：t5还是原来的t5，t5.reshape产生一个新的数组，但是对t5本身不会产生任何改变。
 
@@ -138,11 +138,11 @@ t5/0 ,返回nan，naf等翻译成汉语是，不是一个数字，为单独的�
 t6 = np.arrange(100,124).reshape((4,6))
 ~~~
 
-![t6](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\nunpy.t6.png)
+![t6](C:\Users\DELL\Desktop\work\picture\nunpy.t6.png)
 
 t5
 
-![t5](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy.t5.png)
+![t5](C:\Users\DELL\Desktop\work\picture\numpy.t5.png)
 
 ~~~python
 #进行相加操作
@@ -150,7 +150,7 @@ t6+t5
 #结果为相应数组进行相加
 ~~~
 
-![数组相加](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\数组及相加.png)
+![数组相加](C:\Users\DELL\Desktop\work\picture\数组及相加.png)
 
 但如果操作的数组是不同形状呢？
 
@@ -162,7 +162,7 @@ t5-t7
 
 结果为：
 
-![t5 - t7](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\不同形状数组操作.png)
+![t5 - t7](C:\Users\DELL\Desktop\work\picture\不同形状数组操作.png)
 
 **由此可知，当两个不同形状的数组项操作时，对应同一维度的数组会进行相应操作，t7为一维数组t7.shape为（（6），），t5的shape为（（4，6）），在操作时，相减会发生在每一横行，因为其在同一维度。**
 
@@ -178,7 +178,7 @@ t8 = np.arange(4).reshape((4,1))
 
 t5-t8:
 
-![t5-t8](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\t5-t8.png)
+![t5-t8](C:\Users\DELL\Desktop\work\picture\t5-t8.png)
 
 **同上，只是此数据为每一列进行相操作,但是，需要注意的是，他们能够计算是有前提的，必须是有相同的行数或者列数，多出来之后就不行了**
 
@@ -192,21 +192,21 @@ t2.transpose()
 
 运行结果:
 
-![transpose](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy.transpose.png)
+![transpose](C:\Users\DELL\Desktop\work\picture\numpy.transpose.png)
 
 ***
 
 ### 轴
 
-![numpy的轴](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy的轴.png)
+![numpy的轴](C:\Users\DELL\Desktop\work\picture\numpy的轴.png)
 
 - 二维数组的轴
 
-![二维数组的轴](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\二维数组的轴.png)
+![二维数组的轴](C:\Users\DELL\Desktop\work\picture\二维数组的轴.png)
 
 - 三维数组的轴
 
-![三维数组的轴](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\三维数组的轴.png)
+![三维数组的轴](C:\Users\DELL\Desktop\work\picture\三维数组的轴.png)
 
 ## numpy读取数据
 
@@ -218,7 +218,7 @@ np.loadtxt(frame,dtype = np.float,delimiter = None,skiprows = 0,usecols = None,u
 
 - 注意:从文本文件读取内容,frame是文件路径,,dtype = np.float,是读文件成什么类型,delimiter是文件用什么分割开的,skiprows = 0,表示跳过第一行,usecols = None,使用哪几列,unpack转至.
 
-![numpy读取数据](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy读取数据1.png)
+![numpy读取数据](C:\Users\DELL\Desktop\work\picture\numpy读取数据1.png)
 
 - 补充:unpack是转至效果,将数据进行行转列,列转行,有一定的旋转作用效果。
 
@@ -264,7 +264,7 @@ print(t2[[0,2,2],[0,1,3]])#取[0,0],[2,1],[2,3]三个点
 
 ***
 
-![赋值操作](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy赋值相关操作.png)
+![赋值操作](C:\Users\DELL\Desktop\work\picture\numpy赋值相关操作.png)
 
 ##### numpy中的布尔索引
 
@@ -294,7 +294,7 @@ np.vstack((t1,t2))#竖直拼接，添加行数
 np.hstack((t1,t2))#水平拼接,添加列数
 ~~~
 
-![水平竖直拼接](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy的水平竖直拼接.png)
+![水平竖直拼接](C:\Users\DELL\Desktop\work\picture\numpy的水平竖直拼接.png)
 
 ## 数组的行列交换
 
@@ -317,7 +317,7 @@ np.ones((t2.shape[0],1))  #为浮点数
 
 创建与拼接实例：
 
-![实例](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\水平竖直拼接实例.png)
+![实例](C:\Users\DELL\Desktop\work\picture\水平竖直拼接实例.png)
 
 - 创建一个对角线为1的正方形数组（方阵） np.eye(3) #创建一个三行三列的数组，对角线为1。
 
@@ -333,7 +333,7 @@ np.argemax(t,axis = 0)
 t = np.eye(4)
 ~~~
 
-![4*4](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\正方形矩阵.png)
+![4*4](C:\Users\DELL\Desktop\work\picture\正方形矩阵.png)
 
 取最大值
 
@@ -365,21 +365,21 @@ np.random.randint(10,20,(4,5))
 #使用seed操作为随机种子，能够达到在后续每次随即得到数据时，会重复相同的形状和结果，重复seed()中的数据次数。
 ~~~
 
-![copy和view](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\视图和复制.png)
+![copy和view](C:\Users\DELL\Desktop\work\picture\视图和复制.png)
 
 ***
 
 ## numpy中的nan和inf
 
-![nan和inf](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\nan和inf.png)
+![nan和inf](C:\Users\DELL\Desktop\work\picture\nan和inf.png)
 
 - 注意：nan和inf都是浮点类型
 
 特殊属性：
 
-![nan的特殊属性](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\nan的特殊属性.png)
+![nan的特殊属性](C:\Users\DELL\Desktop\work\picture\nan的特殊属性.png)
 
-![nan的特殊用法](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\np.nan不等于np.nan.png)
+![nan的特殊用法](C:\Users\DELL\Desktop\work\picture\np.nan不等于np.nan.png)
 
 - 只有nan的地方为True
 
@@ -389,11 +389,11 @@ np.isnan(t2) #判断数组中有多少个值为nan，他就是np.nan!=np.nan
 
 - nan和任何值计算都是nan
 
-![nan的计算](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\nan的计算.png)
+![nan的计算](C:\Users\DELL\Desktop\work\picture\nan的计算.png)
 
 numpy中常用统计函数
 
-![numpy常用统计函数](C:\Users\DELL\Desktop\笔记\笔记截图的保存地址\numpy常用统计函数.png)
+![numpy常用统计函数](C:\Users\DELL\Desktop\work\picture\numpy常用统计函数.png)
 
 ~~~python
 import numpy as np
