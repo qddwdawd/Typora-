@@ -3165,34 +3165,76 @@ bins_of_col #包含所有列的名称和区间。
 
 
 
-### 3.3.7 对所有特征进行分箱选择
-
-#### 3.4计算各箱的WOE并映射到数据中
+### 3.4计算各箱的WOE并映射到数据中
 
 ~~~python
+我们现在已经有了我们的箱子，接下来我们要做的是计算各箱的WOE，并且把WOE替换到我们的原始数据
+model_data中，因为我们将使用WOE覆盖后的数据来建模，我们希望获取的是”各个箱”的分类结果，即评分卡上
+各个评分项目的分类结果。
 ~~~
 
+~~~python
+data = model_data.copy()
+#函数pd.cut，可以根据已知的分箱间隔把数据分箱
+#参数为 pd.cut(数据，以列表表示的分箱间隔)
+data = data[["age","SeriousDlqin2yrs"]].copy()
+data["cut"] = pd.cut(data["age"],[-np.inf, 48.49986200790144, 58.757170160044694, 64.0, 
+74.0, np.inf])
+data
+~~~
 
+![image-20220803135546416](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220803135546416.png)
 
+~~~python
+#将数据按分箱结果聚合，并取出其中的标签值
+data.groupby("cut")["SeriousDlqin2yrs"].value_counts()
+~~~
 
+![image-20220803135849167](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220803135849167.png)
 
+~~~python
+#使用unstack()来将树状结构变成表状结构
+data.groupby("cut")["SeriousDlqin2yrs"].value_counts().unstack()
+~~~
 
+![image-20220803140026462](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220803140026462.png)
 
+~~~python
+bins_df = data.groupby("cut")["SeriousDlqin2yrs"].value_counts().unstack()
+bins_df["woe"] = np.log((bins_df[0]/bins_df[0].sum())/(bins_df[1]/bins_df[1].sum()))
+~~~
 
+![image-20220803140236037](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220803140236037.png)
 
+~~~python
+#把以上过程包装成函数
+def get_woe(df,col,y,bins):
+    df = df[[col,y]].copy()
+    df["cut"] = pd.cut(df[col],bins)
+    bins_df = df.groupby("cut")[y].value_counts().unstack()
+    woe = bins_df["woe"] = 
+np.log((bins_df[0]/bins_df[0].sum())/(bins_df[1]/bins_df[1].sum()))
+    return woe
+#将所有特征的WOE存储到字典当中
+woeall = {}
+for col in bins_of_col:
+    woeall[col] = get_woe(model_data,col,"SeriousDlqin2yrs",bins_of_col[col])
+woeall
+~~~
 
+![image-20220803140515172](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220803140515172.png)
 
-
-
-
-
-
-
-
-
-
-
-
+~~~python
+#不希望覆盖掉原本的数据，创建一个新的DataFrame，索引和原始数据model_data一模一样
+model_woe = pd.DataFrame(index=model_data.index) #将原数据分箱后，按箱的结果把WOE结构用map函数映射到数据中
+model_woe["age"] = pd.cut(model_data["age"],bins_of_col["age"]).map(woeall["age"])
+#对所有特征操作可以写成：
+for col in bins_of_col:
+    model_woe[col] = pd.cut(model_data[col],bins_of_col[col]).map(woeall[col])
+#将标签补充到数据中
+model_woe["SeriousDlqin2yrs"] = model_data["SeriousDlqin2yrs"] #这就是我们的建模数据了
+model_woe.head()
+~~~
 
 # 聚类算法
 
