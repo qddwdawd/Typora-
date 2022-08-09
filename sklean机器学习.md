@@ -3777,3 +3777,328 @@ for n_clusters in [2,3,4,5,6,7]:
 
 ![image-20220731160655784](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220731160655784.png)
 
+
+
+### 3.2重要参数init&random_state&n_init:初始质心怎么放好？
+
+![image-20220809115015173](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115015173.png)
+
+![image-20220809115214462](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115214462.png)
+
+![image-20220809115356996](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115356996.png)
+
+~~~python
+plus = KMeans(n_clusters = 10).fit(X)
+plus.n_iter_  #迭代次数
+time() -t0
+~~~
+
+![image-20220809115427115](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115427115.png)
+
+![image-20220809115556548](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115556548.png)
+
+~~~python
+random = KMeans(n_clusters = 10,init="random",random_state=420).fit(X)
+random.n_iter_
+time() -t0
+~~~
+
+![image-20220809115454395](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115454395.png)
+
+![image-20220809115601019](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115601019.png)
+
+### 3.3重要参数max_iter&tol：让迭代停下来
+
+![image-20220809115735936](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809115735936.png)
+
+~~~python
+random = KMeans(n_clusters = 10,init="random",max_iter=10,random_state=420).fit(X)
+y_pred_max10 = random.labels_
+silhouette_score(X,y_pred_max10)
+~~~
+
+![image-20220809165055383](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809165055383.png)
+
+~~~python
+random = KMeans(n_clusters = 10,init="random",max_iter=20,random_state=420).fit(X)
+y_pred_max20 = random.labels_
+silhouette_score(X,y_pred_max20)
+~~~
+
+![image-20220809165114814](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809165114814.png)
+
+### 3.4重要属性与重要接口
+
+![image-20220809165255011](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809165255011.png)
+
+![image-20220809165302935](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809165302935.png)
+
+### 3.5函数cluster.k_means
+
+![image-20220809165930632](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809165930632.png)
+
+~~~python
+from sklearn.cluster import k_means
+k_means(X,4,return_n_iter=True)
+~~~
+
+- 质心
+
+![image-20220809170002451](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809170002451.png)
+
+- 标签值
+
+![image-20220809170009676](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809170009676.png)
+
+### 4.案例：聚类算法用于降维KMeans的矢量化应用
+
+![image-20220809170245022](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809170245022.png)
+
+![image-20220809170255063](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809170255063.png)
+
+![image-20220809170303550](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809170303550.png)
+
+~~~python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
+from sklearn.metrics import pairwise_distances_argmin
+     #对两个序列中的点进行距离匹配的函数
+from sklearn.datasets import load_sample_image
+     #导入图片数据所用的类
+from sklearn.utils import shuffle
+     #洗牌
+~~~
+
+~~~python
+#实例化导入颐和园的图片
+china = load_sample_image("china.jpg")
+china
+#查看数据类型
+china.dtype
+~~~
+
+![image-20220809171252469](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171252469.png)
+
+
+
+![image-20220809171334676](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171334676.png)
+
+~~~python
+china.shape
+#长度x 宽度x 像素 >三个数决定的颜色
+~~~
+
+![image-20220809171410190](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171410190.png)
+
+~~~python
+china[0][0] #0，0表示取第0行0列的格子，也就是第一个格子，而每一个格子都有3层，将每一层的颜色展现出来。
+~~~
+
+![image-20220809171539522](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171539522.png)
+
+![image-20220809171635164](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171635164.png)
+
+~~~python
+#包含了多少种不用的颜色？
+newimage = china.reshape((427 * 640,3))
+~~~
+
+![image-20220809171950544](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809171950544.png)
+
+~~~python
+import pandas as pd
+pd.DataFrame(newimage).drop_duplicates().shape #删除重复值
+~~~
+
+![image-20220809172111835](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809172111835.png)
+
+- 解释：因为图片都是三维数组，.shape的意思是展示有多少行多少列多少层数据，而reshape之后变成了273280，他的意思是有273280个格子，3表示为三种颜色通道，每一个格子中还是有三个数表示每一层的颜色，讲重复值删除之后得到的是这三个数完全不相同的剩下的格子数量。
+
+~~~python
+plt.figure(figsize=(15,15))
+plt.imshow(china) #导入三维数组形成的图片
+~~~
+
+![image-20220809172654838](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809172654838.png)
+
+~~~python
+#查看模块中另一张
+flower = load_sample_image("flower.jpg")
+plt.figure(figsize=(15,15))
+plt.imshow(flower)
+~~~
+
+![image-20220809172912483](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809172912483.png)
+
+![image-20220809172929997](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809172929997.png)
+
+~~~python
+n_clusters = 64
+
+china = np.array(china, dtype=np.float64) / china.max()
+w, h, d = original_shape = tuple(china.shape)
+assert d == 3
+image_array = np.reshape(china, (w * h, d))
+
+~~~
+
+
+
+~~~python
+#plt.imshow在浮点数上表现非常优异，在这里我们把china中的数据转化为浮点数，压缩到[0，1]之间
+china = np.array(china, dtype=np.float64) / china.max()
+~~~
+
+![image-20220809173646077](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809173646077.png)
+
+~~~python
+#把china从图像格式，转换成矩阵格式
+w, h, d = original_shape = tuple(china.shape)
+~~~
+
+![image-20220809173951907](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809173951907.png)
+
+~~~python
+assert d == 3 #如果d不等于3就报错
+~~~
+
+![image-20220809174144404](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809174144404.png)
+
+~~~python
+d_ = 5
+assert d_ == 3, "一个格子中的特征数目不等于3种"
+~~~
+
+![image-20220809174203804](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809174203804.png)
+
+~~~python
+image_array = np.reshape(china, (w * h, d)) 
+image_array  #变为二维，但是仍然表示三通道他的意思是每个小括号中代表三通道，将所有的数据摆到一行。
+~~~
+
+![image-20220809182650704](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809182650704.png)
+
+#### 对数据进行K-Means的矢量量化
+
+~~~python
+#首先，先使用1000个数据来找出质心
+image_array_sample = shuffle(image_array, random_state=0)[:1000]#shuffle打乱顺序
+kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(image_array_sample)#虽然KMeans表示的是二维数组，但是他展示的仍然是三维空间，质心为三维。
+kmeans.cluster_centers_
+~~~
+
+![image-20220809183209966](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809183209966.png)
+
+![image-20220809183321811](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809183321811.png)
+
+~~~python
+#找出质心之后，按照已存在的质心对所有数据集进行聚类
+labels = kmeans.predict(image_array)
+labels.shape
+~~~
+
+![image-20220809183410026](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809183410026.png)
+
+![image-20220809183547147](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809183547147.png)
+
+![image-20220809184013165](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184013165.png)
+
+~~~python
+#使用质心来替换所有的样本
+image_kmeans = image_array.copy()
+~~~
+
+![image-20220809184317123](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184317123.png)
+
+~~~python
+labels #这27w个样本点所对应的簇的质心的索引
+~~~
+
+![image-20220809184447665](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184447665.png)
+
+~~~python
+for i in range(w*h):
+    image_kmeans[i] = kmeans.cluster_centers_[labels[i]]
+~~~
+
+~~~python
+#查看生成的新图片的信息
+image_kmeans
+~~~
+
+![image-20220809184832476](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184832476.png)
+
+![image-20220809184909682](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184909682.png)
+
+~~~python
+pd.DataFrame(image_kmeans).drop_duplicates().shape
+~~~
+
+![image-20220809184930825](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809184930825.png)
+
+~~~python
+#恢复图片的结构
+image_kmeans = image_kmeans.reshape(w,h,d)
+image_kmeans.shape
+~~~
+
+![image-20220809185040592](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185040592.png)
+
+#### 对数据进行随机的矢量量化
+
+~~~python
+centroid_random = shuffle(image_array, random_state=0)[:n_clusters]#随机选择64个点，并不是聚类
+~~~
+
+![image-20220809185156476](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185156476.png)
+
+~~~~python
+labels_random = pairwise_distances_argmin(centroid_random,image_array,axis=0)
+~~~~
+
+![image-20220809185248734](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185248734.png)
+
+![image-20220809185522633](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185522633.png)
+
+![image-20220809185530953](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185530953.png)
+
+![image-20220809185550377](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185550377.png)
+
+~~~python
+for i in range(w*h):
+    image_random[i] = centroid_random[labels_random[i]]
+~~~
+
+~~~python
+#恢复图片的颜色#这次是随机选出来的质心，而上上边是认真聚类聚出来的
+image_random = image_random.reshape(w,h,d)
+image_random.shape
+~~~
+
+####  将原图，按KMeans矢量量化和随机矢量量化的图像绘制出来
+
+~~~python
+plt.figure(figsize=(10,10))
+plt.axis('off')
+plt.title('Original image (96,615 colors)')
+plt.imshow(china)
+plt.figure(figsize=(10,10))
+plt.axis('off')
+plt.title('Quantized image (64 colors, K-Means)')
+plt.imshow(image_kmeans)
+plt.figure(figsize=(10,10))
+plt.axis('off')
+plt.title('Quantized image (64 colors, Random)')
+plt.imshow(image_random)
+plt.show()
+~~~
+
+![image-20220809185904211](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185904211.png)
+
+![image-20220809185909818](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185909818.png)
+
+![image-20220809185935955](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185935955.png)
+
+
+

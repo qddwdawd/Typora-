@@ -51,7 +51,7 @@ print(t3)
 
 ~~~python
 import pandas as pd
-df = pd.read_csv("./diabetes (2).csv") #表示读取当前文件夹下的diabetes (2).csv文件，且最好是当前文件夹下的文件,右击复制绝对路径
+df = pd.read_csv("./diabetes (2).csv",sheet_name ) #表示读取当前文件夹下的diabetes (2).csv文件，且最好是当前文件夹下的文件,右击复制绝对路径
 ~~~
 
 运行结果：
@@ -154,3 +154,6 @@ Out[3]:
 1  4  5   6   7
 2  8  9  10  11
 
+# ipynb转html
+
+jupyter nbconvert --to html --template full C:\Users\DELL\Desktop\Jupyter.python\西北大学.ipynb
