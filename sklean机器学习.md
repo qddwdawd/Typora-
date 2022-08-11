@@ -4100,5 +4100,850 @@ plt.show()
 
 ![image-20220809185935955](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220809185935955.png)
 
+ # sklearn中的线性回归大家族
 
 
+
+![image-20220810095149893](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810095149893.png)
+
+### 1.1线性回归大家族
+
+![image-20220810095647212](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810095647212.png)
+
+### 1.2sklearn中的线性回归
+
+### 2 **多元线性回归**LinearRegression
+
+### 2.1 多元线性回归的基本原理
+
+![image-20220810100311342](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810100311342.png)
+
+![image-20220810101156871](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101156871.png)
+
+![image-20220810101208961](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101208961.png)
+
+### 2.2最小二乘法求解多元线性回归的参数
+
+![image-20220810101732624](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101732624.png)
+
+![image-20220810101753551](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101753551.png)
+
+![image-20220810101801476](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101801476.png)
+
+![image-20220810101808263](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810101808263.png)
+
+### 2.3 linear_model.LinearRegression
+
+![image-20220810102751427](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810102751427.png)
+
+![image-20220810102832856](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810102832856.png)
+
+~~~python
+from sklearn.linear_model import LinearRegression as LR
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
+from sklearn.datasets import fetch_california_housing as fch #加利福尼亚房屋价值数据集
+import pandas as pd
+~~~
+
+~~~python
+housevalue = fch() #会需要下载，大家可以提前运行试试看
+~~~
+
+![image-20220810103852075](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810103852075.png)
+
+~~~python
+X = pd.DataFrame(housevalue.data) #放入DataFrame中便于查看
+~~~
+
+![image-20220810103932228](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810103932228.png)
+
+![image-20220810103951019](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810103951019.png)
+
+~~~python
+y = housevalue.target #通过观察为连续性数据
+~~~
+
+![image-20220810104048813](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104048813.png)
+
+![image-20220810104104220](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104104220.png)
+
+~~~python
+housevalue.feature_names
+~~~
+
+
+
+![image-20220810104152117](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104152117.png)
+
+~~~python
+x.columns = housevalue.feature_names
+"""
+MedInc：该街区住户的收入中位数
+HouseAge：该街区房屋使用年代的中位数
+AveRooms：该街区平均的房间数目
+AveBedrms：该街区平均的卧室数目
+Population：街区人口
+AveOccup：平均入住率
+Latitude：街区的纬度
+Longitude：街区的经度
+"""
+~~~
+
+![image-20220810104317495](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104317495.png)
+
+~~~python
+#3. 分训练集和测试集
+Xtrain, Xtest, Ytrain, Ytest = train_test_split(X,y,test_size=0.3,random_state=420)
+~~~
+
+![image-20220810104529735](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104529735.png)
+
+![image-20220810104626596](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104626596.png)
+
+~~~python
+#恢复索引
+for i in [Xtrain, Xtest]:
+    i.index = range(i.shape[0])
+~~~
+
+![image-20220810104740748](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810104740748.png)
+
+~~~python
+Xtrain.shape
+#如果希望进行数据标准化，还记得应该怎么做吗？
+#先用训练集训练(fit)标准化的类，然后用训练好的类分别转化(transform)训练集和测试集
+~~~
+
+![image-20220810105020064](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810105020064.png)
+
+~~~python
+reg = LR().fit(Xtrain, Ytrain) #建立多元线性回归模型
+yhat = reg.predict(Xtest)  #预测我们的yhat
+yhat  #可以看到yhat的预测值在原有的真实标签范围之外的。
+~~~
+
+![image-20220810110013744](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810110013744.png)
+
+~~~python
+reg.coef_#w,系数向量
+~~~
+
+![image-20220810110326752](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810110326752.png)
+
+~~~python
+[*zip(Xtrain.columns,reg.coef_)]
+"""
+MedInc：该街区住户的收入中位数
+HouseAge：该街区房屋使用年代的中位数
+AveRooms：该街区平均的房间数目
+AveBedrms：该街区平均的卧室数目
+Population：街区人口
+AveOccup：平均入住率
+Latitude：街区的纬度
+Longitude：街区的经度
+"""
+~~~
+
+![image-20220810110545467](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810110545467.png)
+
+![image-20220810110814494](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810110814494.png)
+
+![image-20220810111136829](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810111136829.png)
+
+### 3.回归类的模型评估指标
+
+![image-20220810144358786](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810144358786.png)
+
+### 3.1是否预测了正确的数值
+
+![image-20220810144756956](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810144756956.png)
+
+~~~python
+from sklearn.metrics import mean_squared_error as MSE #只是表示均方误差而不是损失所以为正。
+MSE(yhat,Ytest)
+~~~
+
+![image-20220810145130656](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145130656.png)
+
+![image-20220810145141883](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145141883.png)
+
+![image-20220810145418444](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145418444.png)
+
+~~~python
+#交叉验证
+cross_val_score(reg,X,y,cv=10,scoring="mean_squared_error")#scoring指的是评估指标。
+~~~
+
+![image-20220810145504679](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145504679.png)
+
+~~~python
+#为什么报错了？来试试看！
+import sklearn
+sorted(sklearn.metrics.SCORERS.keys())#查看所有的评估指标
+~~~
+
+![image-20220810145650360](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145650360.png)
+
+![image-20220810145709472](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145709472.png)
+
+~~~python
+cross_val_score(reg,X,y,cv=10,scoring="neg_mean_squared_error")#负数的原因是单单的为了说明均方误差是一种损失。
+~~~
+
+![image-20220810145734168](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145734168.png)
+
+#### 欢迎来的线性回归的大坑一号：均方误差为负。
+
+![image-20220810145904581](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145904581.png)
+
+![image-20220810145917112](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145917112.png)
+
+![image-20220810145928347](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810145928347.png)
+
+### 3.2是否拟合了足够的信息
+
+![image-20220810150624628](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810150624628.png)
+
+![image-20220810150637566](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810150637566.png)
+
+![image-20220810150647707](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810150647707.png)
+
+~~~python
+#调用R2
+from sklearn.metrics import r2_score  #回归类模型第一类衡量指标
+r2_score(yhat,Ytest)#越接近于1越好。yhat是预测值，而ytest才是真实值，所以位置填反了。
+~~~
+
+![image-20220810151407962](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810151407962.png)
+
+- 模型效果很差
+
+~~~python
+r2 = reg.score(Xtest,Ytest)#这是正常的先实例化在fit在scroe的过程，所以回归类型的score得到的是R2.
+r2
+~~~
+
+![image-20220810151450531](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810151450531.png)
+
+#### **我们现在踩到了线性回归的大坑二号：相同的评估指标不同的结果**。
+
+![image-20220810151523573](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810151523573.png)
+
+~~~python
+#使用shift tab键来检查究竟哪个值先进行输入
+r2_score(Ytest,yhat) 
+#或者你也可以指定参数，就不必在意顺序了
+r2_score(y_true = Ytest,y_pred = yhat)
+~~~
+
+![image-20220810152243435](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152243435.png)
+
+~~~python
+cross_val_score(reg,X,y,cv=10,scoring="r2").mean()
+~~~
+
+![image-20220810152314833](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152314833.png)
+
+![image-20220810152356785](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152356785.png)
+
+~~~python
+import matplotlib.pyplot as plt
+sorted(Ytest)  #将Ytest进行排序，从小到大
+plt.plot(range(len(Ytest)),sorted(Ytest),c="black",label= "Data")
+plt.plot(range(len(yhat)),sorted(yhat),c="red",label = "Predict")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220810152523727](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152523727.png)
+
+![image-20220810152740753](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152740753.png)
+
+![image-20220810152802154](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152802154.png)
+
+~~~python
+import numpy as np
+rng = np.random.RandomState(42) 
+X = rng.randn(100, 80) 
+y = rng.randn(100)
+cross_val_score(LR(), X, y, cv=5, scoring='r2')
+~~~
+
+#### **线性回归的三号大坑：负的** R2
+
+![image-20220810152925599](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810152925599.png)
+
+![image-20220810153044235](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810153044235.png)
+
+![image-20220810154255650](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154255650.png)
+
+![image-20220810154304790](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154304790.png)
+
+![image-20220810154312809](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154312809.png)
+
+### 4.多重共线性：岭回归 与Lasso
+
+#### 4.1最熟悉的陌生人：多重共线性
+
+![image-20220810154529579](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154529579.png)
+
+![image-20220810154540826](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154540826.png)
+
+![image-20220810154556378](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154556378.png)
+
+![image-20220810154608722](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154608722.png)
+
+- 太多了就不展示了。
+
+![image-20220810154859619](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810154859619.png)
+
+![image-20220810155355938](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810155355938.png)
+
+### 4.2岭回归
+
+### 4.2.1岭回归解决多重共线性问题
+
+![image-20220810161149018](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810161149018.png)
+
+### 4.2.2 linear_model.Ridge
+
+![image-20220810203334211](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810203334211.png)
+
+~~~python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import Ridge, LinearRegression, Lasso
+from sklearn.model_selection import train_test_split as TTS
+from sklearn.datasets import fetch_california_housing as fch
+import matplotlib.pyplot as plt
+~~~
+
+~~~python
+housevalue = fch()
+X = pd.DataFrame(housevalue.data) y = housevalue.target
+X.columns = ["住户收入中位数","房屋使用年代中位数","平均房间数目"
+           ,"平均卧室数目","街区人口","平均入住率","街区的纬度","街区的经度"]
+~~~
+
+~~~python
+Xtrain,Xtest,Ytrain,Ytest = TTS(X,y,test_size=0.3,random_state=420)
+~~~
+
+~~~python
+#数据集索引恢复
+for i in [Xtrain,Xtest]:
+    i.index = range(i.shape[0])
+~~~
+
+![image-20220810203720080](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810203720080.png)
+
+~~~python
+#使用岭回归来进行建模
+reg = Ridge(alpha=1).fit(Xtrain,Ytrain)
+reg.score(Xtest,Ytest) #加利福尼亚房价数据集中应该不是共线性问题
+~~~
+
+![image-20220810203811799](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810203811799.png)
+
+~~~python
+#交叉验证下，与线性回归相比，岭回归的结果如何变化？
+alpharange = np.arange(1,1001,100)
+ridge, lr = [], []
+for alpha in alpharange:
+    reg = Ridge(alpha=alpha)
+    linear = LinearRegression()
+    regs = cross_val_score(reg,X,y,cv=5,scoring = "r2").mean()
+    linears = cross_val_score(linear,X,y,cv=5,scoring = "r2").mean()
+    ridge.append(regs)
+    lr.append(linears)
+plt.plot(alpharange,ridge,color="red",label="Ridge")
+plt.plot(alpharange,lr,color="orange",label="LR")
+plt.title("Mean")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220810204019045](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220810204019045.png)
+
+~~~python
+#使用岭回归来进行建模
+reg = Ride(alpha = 101).fit(Xtrain,Ytrain)
+reg.score(Xtest,Ytest)#加利福尼亚房屋价值数据集中应该不是共线问题
+~~~
+
+![image-20220811104631187](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811104631187.png)
+
+![image-20220811104420189](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811104420189.png)
+
+~~~python
+#细化学习曲线
+alpharange = np.arange(100,300,10)
+ridge, lr = [], []
+for alpha in alpharange:
+    reg = Ridge(alpha=alpha)
+    #linear = LinearRegression()
+    regs = cross_val_score(reg,X,y,cv=5,scoring = "r2").mean()
+    #linears = cross_val_score(linear,X,y,cv=5,scoring = "r2").mean()
+    ridge.append(regs)
+    lr.append(linears)
+plt.plot(alpharange,ridge,color="red",label="Ridge")
+#plt.plot(alpharange,lr,color="orange",label="LR")
+plt.title("Mean")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220811104829651](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811104829651.png)
+
+![image-20220811104904011](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811104904011.png)
+
+### **4.2.3** 选取最佳的正则化参数取值
+
+~~~python
+#先查看方差的变化
+alpharange = np.arange(1,1001,100)
+ridge, lr = [], []
+for alpha in alpharange:
+    reg = Ridge(alpha=alpha)
+    linear = LinearRegression()
+    varR = cross_val_score(reg,X,y,cv=5,scoring="r2").var()
+    varLR = cross_val_score(linear,X,y,cv=5,scoring="r2").var()
+    ridge.append(varR)
+    lr.append(varLR)
+plt.plot(alpharange,ridge,color="red",label="Ridge")
+plt.plot(alpharange,lr,color="orange",label="LR")
+plt.title("Variance")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220811104952717](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811104952717.png)
+
+~~~python
+~~~
+
+![image-20220811161250102](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811161250102.png)
+
+~~~python
+from sklearn.datasets import load_boston
+from sklearn.model_selection import cross_val_score
+X = load_boston().data
+y = load_boston().target
+Xtrain,Xtest,Ytrain,Ytest = TTS(X,y,test_size=0.3,random_state=420)
+~~~
+
+![image-20220811161400666](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811161400666.png)
+
+~~~python
+#查看R2的变化
+alpharange = np.arange(1,1001,100)
+ridge, lr = [], []
+for alpha in alpharange:
+    reg = Ridge(alpha=alpha)
+    linear = LinearRegression()
+    regs = cross_val_score(reg,X,y,cv=5,scoring = "r2").mean()
+    linears = cross_val_score(linear,X,y,cv=5,scoring = "r2").mean()
+    ridge.append(regs)
+    lr.append(linears)
+plt.plot(alpharange,ridge,color="red",label="Ridge")
+plt.plot(alpharange,lr,color="orange",label="LR")
+plt.title("Mean")
+plt.legend()
+plt.show(
+~~~
+
+![image-20220811161421124](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811161421124.png)
+
+~~~python
+#细化学习曲线
+alpharange = np.arange(100,300,10)
+ridge, lr = [], []
+for alpha in alpharange:
+    reg = Ridge(alpha=alpha)
+    #linear = LinearRegression()
+    regs = cross_val_score(reg,X,y,cv=5,scoring = "r2").mean()
+    #linears = cross_val_score(linear,X,y,cv=5,scoring = "r2").mean()
+    ridge.append(regs)
+    lr.append(linears)
+plt.plot(alpharange,ridge,color="red",label="Ridge")
+#plt.plot(alpharange,lr,color="orange",label="LR")
+plt.title("Mean")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220811161711465](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811161711465.png)
+
+![image-20220811161928270](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811161928270.png)
+
+### **4.2.3** 选取最佳的正则化参数取值
+
+![image-20220811162335689](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811162335689.png)
+
+~~~python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import linear_model
+#创造10*10的希尔伯特矩阵
+X = 1. / (np.arange(1, 11) + np.arange(0, 10)[:, np.newaxis])
+y = np.ones(10) 
+#计算横坐标
+n_alphas = 200
+alphas = np.logspace(-10, -2, n_alphas) 
+#建模，获取每一个正则化取值下的系数组合
+coefs = []
+for a in alphas:
+    ridge = linear_model.Ridge(alpha=a, fit_intercept=False)
+    ridge.fit(X, y)
+    coefs.append(ridge.coef_) #绘图展示结果
+ax = plt.gca()
+ax.plot(alphas, coefs)
+ax.set_xscale('log')
+ax.set_xlim(ax.get_xlim()[::-1])  #将横坐标逆转
+plt.xlabel('正则化参数alpha')
+plt.ylabel('系数w')
+plt.title('岭回归下的岭迹图')
+plt.axis('tight')
+plt.show()
+~~~
+
+![image-20220811162808008](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811162808008.png)
+
+![image-20220811162834186](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811162834186.png)
+
+![image-20220811162940418](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811162940418.png)
+
+![image-20220811163002034](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811163002034.png)
+
+![image-20220811163018188](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811163018188.png)
+
+~~~python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import RidgeCV, LinearRegression
+from sklearn.model_selection import train_test_split as TTS
+from sklearn.datasets import fetch_california_housing as fch
+import matplotlib.pyplot as plt
+housevalue = fch()
+X = pd.DataFrame(housevalue.data) 
+y = housevalue.target
+X.columns = ["住户收入中位数","房屋使用年代中位数","平均房间数目"
+           ,"平均卧室数目","街区人口","平均入住率","街区的纬度","街区的经度"]
+#把全数据导入不需要分训练集和测试集，因为是交叉验证。
+Ridge_ = RidgeCV(alphas=np.arange(1,1001,100)
+                #,scoring="neg_mean_squared_error"
+                 ,store_cv_values=True
+                #,cv=5
+               ).fit(X, y)
+~~~
+
+~~~python
+#无关交叉验证的岭回归结果
+Ridge_.score(X,y)
+~~~
+
+![image-20220811165125239](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165125239.png)
+
+~~~python
+#调用所有交叉验证的结果
+Ridge_.cv_values_
+~~~
+
+![image-20220811165145744](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165145744.png)
+
+~~~python
+#调用所有交叉验证的结果
+Ridge_.cv_values_.shape
+~~~
+
+![image-20220811165326653](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165326653.png)
+
+~~~python
+#进行平均后可以查看每个正则化系数取值下的交叉验证结果
+Ridge_.cv_values_.mean(axis=0)
+~~~
+
+![image-20220811165402462](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165402462.png)
+
+~~~python
+#查看被选择出来的最佳正则化系数
+Ridge_.alpha_
+~~~
+
+![image-20220811165612334](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165612334.png)
+
+~~~python
+#用均方误差进行判断
+Ridge_ = RidgeCV(alphas=np.arange(1,1001,100)
+                ,scoring="neg_mean_squared_error"
+                 ,store_cv_values=True
+                #,cv=5
+               ).fit(X, y)
+~~~
+
+~~~python
+#score返回R2
+Ridge_.score(X,y)
+~~~
+
+![image-20220811165125239](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165125239.png)
+
+~~~python
+#用均方误差查看每个正则化系数取值下的交叉验证结果
+Ridge_.cv_values_.mean(axis=0)
+~~~
+
+![image-20220811170021543](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811170021543.png)
+
+~~~python
+#查看被选择出来的最佳正则化系数
+Ridge_.alpha_
+~~~
+
+![image-20220811165612334](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811165612334.png)
+
+~~~python
+#输入cv之后，Ridge_.cv_values_不能使用。
+~~~
+
+![image-20220811170126018](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811170126018.png)
+
+- 这两个不能够一起使用
+
+### 4.3 Lasso
+
+### 4.3.1Lasso与多重共线性
+
+![image-20220811175903003](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811175903003.png)
+
+![image-20220811175912441](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811175912441.png)
+
+#### 岭回归 vs Lasso
+
+![image-20220811180121891](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811180121891.png)
+
+- Lasso不是从根本上解决多重共线性问题，而是限制多重共线性带来的影响。
+
+### 4.3.2Lasso的核心作用：特征选择
+
+![image-20220811180445288](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811180445288.png)
+
+~~~python
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import Ridge, LinearRegression, Lasso
+from sklearn.model_selection import train_test_split as TTS
+from sklearn.datasets import fetch_california_housing as fch
+import matplotlib.pyplot as plt
+~~~
+
+~~~python
+housevalue = fch()
+X = pd.DataFrame(housevalue.data) 
+y = housevalue.target
+X.columns = ["住户收入中位数","房屋使用年代中位数","平均房间数目"
+           ,"平均卧室数目","街区人口","平均入住率","街区的纬度","街区的经度"] X.head()
+Xtrain,Xtest,Ytrain,Ytest = TTS(X,y,test_size=0.3,random_state=420) #恢复索引
+for i in [Xtrain,Xtest]:
+    i.index = range(i.shape[0])
+~~~
+
+![image-20220811180806896](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811180806896.png)
+
+~~~python
+#线性回归进行拟合
+reg = LinearRegression().fit(Xtrain,Ytrain) 
+(reg.coef_*100).tolist()#线性回归的系数w形成一个列表
+~~~
+
+![image-20220811180854583](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811180854583.png)
+
+~~~python
+#岭回归进行拟合
+Ridge_ = Ridge(alpha=0).fit(Xtrain,Ytrain) 
+(Ridge_.coef_*100).tolist()#岭回归的
+~~~
+
+![image-20220811181134731](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181134731.png)
+
+~~~python
+#Lasso进行拟合
+lasso_ = Lasso(alpha=0).fit(Xtrain,Ytrain) 
+(lasso_.coef_*100).tolist()
+~~~
+
+![image-20220811181219098](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181219098.png)
+
+![image-20220811181420641](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181420641.png)
+
+![image-20220811181455616](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181455616.png)
+
+![image-20220811181800215](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181800215.png)
+
+~~~python
+#岭回归进行拟合
+Ridge_ = Ridge(alpha=0.01).fit(Xtrain,Ytrain) 
+(Ridge_.coef_*100).tolist()
+~~~
+
+![image-20220811181831180](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181831180.png)
+
+~~~python
+#Lasso进行拟合
+lasso_ = Lasso(alpha=0.01).fit(Xtrain,Ytrain) 
+(lasso_.coef_*100).tolist()
+~~~
+
+![image-20220811181900084](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811181900084.png)
+
+~~~python
+#加大正则项系数，观察模型的系数发生了什么变化
+Ridge_ = Ridge(alpha=10**4).fit(Xtrain,Ytrain) 
+(Ridge_.coef_*100).tolist()
+~~~
+
+![image-20220811182124589](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182124589.png)
+
+~~~python
+lasso_ = Lasso(alpha=10**4).fit(Xtrain,Ytrain) 
+(lasso_.coef_*100).tolist()
+#Lasso对于alpha正则化系数异常敏感。
+~~~
+
+![image-20220811182135949](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182135949.png)
+
+~~~python
+#将系数进行绘图
+plt.plot(range(1,9),(reg.coef_*100).tolist(),color="red",label="LR")
+plt.plot(range(1,9),(Ridge_.coef_*100).tolist(),color="orange",label="Ridge")
+plt.plot(range(1,9),(lasso_.coef_*100).tolist(),color="k",label="Lasso")
+plt.plot(range(1,9),[0]*8,color="grey",linestyle="--")
+plt.xlabel('w') #横坐标是每一个特征所对应的系数
+plt.legend()
+plt.show()
+~~~
+
+![image-20220811182223390](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182223390.png)
+
+- 灰色的线是等于零的时候。对于线性回归该是多少就是多少并没有压缩一说。而岭回归比线性回归将特征3和4压缩到了比较小，但不会等于0。而对于Lasso来说其他特征全部被他压缩了0，Lasso对a更加敏感。
+
+### 4.3.3选取最佳的正则化参数取值
+
+![image-20220811182638669](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182638669.png)
+
+![image-20220811182646661](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182646661.png)
+
+![image-20220811182654332](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182654332.png)
+
+![image-20220811182707461](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811182707461.png)
+
+![image-20220811210452622](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811210452622.png)
+
+~~~python
+from sklearn.linear_model import LassoCV
+#自己建立Lasso进行alpha选择的范围，指数函数，base是底数
+alpharange = np.logspace(-10, -2, 200,base=10)
+#其实是形成10为底的指数函数
+#10**(-10)到10**(-2)次方
+~~~
+
+![image-20220811211157962](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811211157962.png)
+
+~~~python
+#不使用lassoCV自带的正则化路径长度和路径中的alpha，需要自己输入alphas。
+lasso_ = LassoCV(alphas=alpharange #自行输入的alpha的取值范围
+               ,cv=5 #交叉验证的折数
+               ).fit(Xtrain, Ytrain)
+~~~
+
+~~~python
+#查看被选择出来的最佳正则化系数
+lasso_.alpha_
+~~~
+
+![image-20220811211426077](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811211426077.png)
+
+~~~python
+#调用所有交叉验证的结果
+lasso_.mse_path_
+~~~
+
+![image-20220811211452817](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811211452817.png)
+
+![image-20220811211601264](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811211601264.png)
+
+~~~python
+lasso_.mse_path_.mean(axis=1) #有注意到在岭回归中我们的轴向是axis=0吗？
+#在岭回归当中，我们是留一验证，因此我们的交叉验证结果返回的是，每一个样本在每个alpha下的交叉验证结果
+#因此我们要求每个alpha下的交叉验证均值，就是axis=0，跨行求均值
+#而在这里，我们返回的是，每一个alpha取值下，每一折交叉验证的结果
+#因此我们要求每个alpha下的交叉验证均值，就是axis=1，跨列求均值
+~~~
+
+~~~python
+#最佳正则化系数下获得的模型的系数结果
+lasso_.coef_
+~~~
+
+![image-20220811211947265](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811211947265.png)
+
+~~~python
+lasso_.score(Xtest,Ytest)
+~~~
+
+![image-20220811212022615](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212022615.png)
+
+~~~python
+#与线性回归相比如何？
+reg = LinearRegression().fit(Xtrain,Ytrain)
+reg.score(Xtest,Ytest)
+~~~
+
+![image-20220811212106719](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212106719.png)
+
+~~~python
+#使用lassoCV自带的正则化路径长度和路径中的alpha个数来自动建立alpha选择的范围，不用自己输入alphas。
+ls_ = LassoCV(eps=0.00001 #正则化路径长度
+             ,n_alphas=300#生成300个alphas
+             ,cv=5
+               ).fit(Xtrain, Ytrain)
+~~~
+
+~~~python
+ls_.alpha_
+~~~
+
+![image-20220811212358139](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212358139.png)
+
+~~~python
+ls_.alphas_ #查看所有自动生成的alpha取值
+~~~
+
+![image-20220811212605778](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212605778.png)
+
+~~~python
+ls_.alphas_.shape#因为自己选择的是n_alphas=300所以生成三百个。
+~~~
+
+![image-20220811212637513](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212637513.png)
+
+~~~python
+ls_.score(Xtest,Ytest)#查看均方误差
+~~~
+
+![image-20220811212737248](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212737248.png)
+
+~~~python
+ls_.coef_#查看所生成的W
+~~~
+
+![image-20220811212813334](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212813334.png)
+
+![image-20220811212824266](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220811212824266.png)
+
+### **5** 非线性问题：多项式回归
+
+
+
+​     
