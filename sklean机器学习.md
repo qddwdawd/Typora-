@@ -4944,6 +4944,664 @@ ls_.coef_#查看所生成的W
 
 ### **5** 非线性问题：多项式回归
 
+### 5.1重塑我们心中的线性概念
+
+![image-20220812083443100](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083443100.png)
+
+### 5.1.1变量之间的线性关系
+
+![image-20220812083513122](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083513122.png)
+
+​     ![image-20220812083531700](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083531700.png)
+
+### 5.1.2数据的线性与非线性
+
+![image-20220812084052388](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812084052388.png)
+
+![image-20220812083627994](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083627994.png)
+
+![image-20220812083635505](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083635505.png)
+
+![image-20220812083646355](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083646355.png)
+
+![image-20220812083653418](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083653418.png)
+
+![image-20220812083700826](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812083700826.png)
+
+### 5.1.3 线性模型与非线性模型
+
+![image-20220812085239317](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812085239317.png)
+
+~~~python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression #线性回归
+from sklearn.tree import DecisionTreeRegressor #决策树
+~~~
+
+~~~python
+rnd = np.random.RandomState(42) #设置随机数种子
+X = rnd.uniform(-3, 3, size=100) #random.uniform，从输入的任意两个整数中取出size个随机数
+#生成y的思路：先使用NumPy中的函数生成一个sin函数图像，然后再人为添加噪音
+y = np.sin(X) + rnd.normal(size=len(X)) / 3 #random.normal，生成size个服从正态分布的随机数
+~~~
+
+~~~python
+#使用散点图观察建立的数据集是什么样子
+plt.scatter(X, y,marker='o',c='k',s=20)
+plt.show()
+~~~
+
+![image-20220812125506898](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812125506898.png)
+
+~~~python
+#为后续建模做准备：sklearn只接受二维以上数组作为特征矩阵的输入
+X.shape
+~~~
+
+![image-20220812125706215](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812125706215.png)
+
+~~~python
+X = X.reshape(-1, 1)
+~~~
+
+![image-20220812125754849](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812125754849.png)
+
+~~~python
+#使用原始数据进行建模
+LinearR = LinearRegression().fit(X, y) #线性回归
+TreeR = DecisionTreeRegressor(random_state=0).fit(X, y) #回归决策树
+~~~
+
+~~~python
+#放置画布
+fig, ax1 = plt.subplots(1) 
+#创建测试数据：一系列分布在横坐标上的点
+line = np.linspace(-3, 3, 1000, endpoint=False).reshape(-1, 1) #将测试数据带入predict接口，获得模型的拟合效果并进行绘制
+ax1.plot(line, LinearR.predict(line), linewidth=2, color='green',
+         label="linear regression")
+ax1.plot(line, TreeR.predict(line), linewidth=2, color='red',
+         label="decision tree") 
+#将原数据上的拟合绘制在图像上
+ax1.plot(X[:, 0], y, 'o', c='k') #其他图形选项
+ax1.legend(loc="best")
+ax1.set_ylabel("Regression output")
+ax1.set_xlabel("Input feature")
+ax1.set_title("Result before discretization")
+plt.tight_layout()
+plt.show()
+~~~
+
+![image-20220812130428112](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812130428112.png)
+
+![image-20220812130703816](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812130703816.png)
+
+- 非线性模型拟合线性数据
+
+![image-20220812131119742](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131119742.png)
+
+- 线性模型拟合非线性数据
+
+![image-20220812131344098](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131344098.png)
+
+![image-20220812131352802](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131352802.png)
+
+- 既是线性，也是非线性的模型
+
+![](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131820371.png)
+
+![image-20220812131848732](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131848732.png)
+
+![image-20220812131858371](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812131858371.png)
+
+### 5.2 **使用分箱处理非线性问题**
+
+![image-20220812133553541](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812133553541.png)
+
+~~~python
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression #多元线性回归
+from sklearn.tree import DecisionTreeRegressor #回归决策树
+~~~
+
+分箱及分箱的相关问题
+
+创建需要拟合的数据集
+
+~~~python
+from sklearn.preprocessing import KBinsDiscretizer
+#将数据分箱
+enc = KBinsDiscretizer(n_bins=10 #分几类？
+                       ,encode="onehot") #ordinal
+X_binned = enc.fit_transform(X)
+#encode模式"onehot"：使用做哑变量方式做离散化，将一个特征分为好几列，属于哪一类哪一类就显示1。
+#之后返回一个稀疏矩阵(m,n_bins)，每一列是一个分好的类别
+#对每一个样本而言，它包含的分类（箱子）中它表示为1，其余分类中它表示为0 
+X.shape
+~~~
+
+![image-20220812184359105](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812184359105.png)
+
+~~~python
+X_binned
+~~~
+
+![image-20220812184503533](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812184503533.png)
+
+~~~python
+#使用pandas打开稀疏矩阵
+import pandas as pd
+pd.DataFrame(X_binned.toarray()).head()
+#分为了10箱，所以有10列，一列表示一个箱子。
+~~~
+
+![image-20220812184543552](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812184543552.png)
+
+~~~python
+#我们将使用分箱后的数据来训练模型，在sklearn中，测试集和训练集的结构必须保持一致，否则报错
+LinearR_ = LinearRegression().fit(X_binned, y)
+LinearR_.predict(line) #line作为测试集
+line.shape #测试
+~~~
+
+![image-20220812184905281](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812184905281.png)
+
+![image-20220812184914608](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812184914608.png)
+
+~~~python
+#因此我们需要创建分箱后的测试集：按照已经建好的分箱模型将line分箱
+line_binned = enc.transform(line)
+~~~
+
+~~~python
+line_binned.shape 
+#分箱后的数据是无法进行绘图的
+~~~
+
+![image-20220812185048207](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812185048207.png)
+
+~~~python
+line_binned
+~~~
+
+![image-20220812185115248](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812185115248.png)
+
+![image-20220812191852603](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812191852603.png)
+
+~~~python
+LinearR_.predict(line_binned).shape
+~~~
+
+![image-20220812192112723](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812192112723.png)
+
+~~~python
+#准备数据
+enc = KBinsDiscretizer(n_bins=10,encode="onehot")
+X_binned = enc.fit_transform(X)
+line_binned = enc.transform(line) #将两张图像绘制在一起，布置画布
+fig, (ax1, ax2) = plt.subplots(ncols=2
+                               , sharey=True #让两张图共享y轴上的刻度
+                               , figsize=(10, 4))
+#在图1中布置在原始数据上建模的结果
+ax1.plot(line, LinearR.predict(line), linewidth=2, color='green',
+         label="linear regression")
+ax1.plot(line, TreeR.predict(line), linewidth=2, color='red',
+         label="decision tree")
+ax1.plot(X[:, 0], y, 'o', c='k')
+ax1.legend(loc="best")
+ax1.set_ylabel("Regression output")
+ax1.set_xlabel("Input feature")
+ax1.set_title("Result before discretization") #使用分箱数据进行建模
+LinearR_ = LinearRegression().fit(X_binned, y)
+TreeR_ = DecisionTreeRegressor(random_state=0).fit(X_binned, y) #进行预测，在图2中布置在分箱数据上进行预测的结果
+ax2.plot(line #横坐标
+         , LinearR_.predict(line_binned) #分箱后的特征矩阵的结果
+         , linewidth=2
+         , color='green'
+         , linestyle='-'
+         , label='linear regression')
+ax2.plot(line, TreeR_.predict(line_binned), linewidth=2, color='red',
+         linestyle=':', label='decision tree') #绘制和箱宽一致的竖线
+ax2.vlines(enc.bin_edges_[0] #x轴
+           , *plt.gca().get_ylim() #y轴的上限和下限
+           , linewidth=1
+           , alpha=.2) #将原始数据分布放置在图像上
+ax2.plot(X[:, 0], y, 'o', c='k') #其他绘图设定
+ax2.legend(loc="best")
+ax2.set_xlabel("Input feature")
+ax2.set_title("Result after discretization")
+plt.tight_layout()
+plt.show()
+~~~
+
+![image-20220812210244915](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812210244915.png)
+
+~~~python
+#分5箱时
+print(LineaR_.score(line_binned,np.sin(line))) #线性回归结果
+~~~
+
+![image-20220812213948330](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812213948330.png)
+
+~~~python
+#分10箱时
+print(LineaR_.score(line_binned,np.sin(line))) #线性回归结果
+~~~
+
+![image-20220812214016786](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812214016786.png)
+
+~~~python
+#怎样选取最优的箱子?
+from sklearn.model_selection import cross_val_score as CVS
+import numpy as np
+pred,score,var = [], [], []
+binsrange = [2,5,10,15,20,30]
+for i in binsrange:
+    #实例化分箱类
+    enc = KBinsDiscretizer(n_bins=i,encode="onehot")
+    #转换数据
+    X_binned = enc.fit_transform(X)
+    line_binned = enc.transform(line)
+    #建立模型
+    LinearR_ = LinearRegression()
+    #全数据集上的交叉验证
+    cvresult = CVS(LinearR_,X_binned,y,cv=5)
+    score.append(cvresult.mean())
+    var.append(cvresult.var())
+    #测试数据集上的打分结果
+    pred.append(LinearR_.fit(X_binned,y).score(line_binned,np.sin(line)))
+#绘制图像
+plt.figure(figsize=(6,5))
+plt.plot(binsrange,pred,c="orange",label="test")
+plt.plot(binsrange,score,c="k",label="full data")
+plt.plot(binsrange,score+np.array(var)*0.5,c="red",linestyle="--",label = "var")
+plt.plot(binsrange,score-np.array(var)*0.5,c="red",linestyle="--")
+plt.legend()
+plt.show()
+~~~
+
+![image-20220812214416109](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220812214416109.png)
+
+### 5.3多项式回归PolynomialFeatures
+
+![image-20220813133408336](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813133408336.png)
+
+![image-20220813133420054](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813133420054.png)
+
+![image-20220813133429047](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813133429047.png)
+
+~~~python
+from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+#如果原始数据是一维的
+X = np.arange(1,4).reshape(-1,1)  #升为2为数组
+X
+~~~
+
+![image-20220813184416683](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813184416683.png)
+
+~~~python
+#二次多项式，参数degree控制多项式的次方
+poly = PolynomialFeatures(degree=2) #接口transform直接调用
+X_ = poly.fit_transform(X)
+X_#升维之后的数据
+~~~
+
+![image-20220813184510891](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813184510891.png)
+
+~~~python
+#三次多项式
+PolynomialFeatures(degree=3).fit_transform(X)
+~~~
+
+![image-20220813184643650](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813184643650.png)
+
+![image-20220813190830551](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813190830551.png)
+
+![image-20220813190847832](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813190847832.png)
+
+![image-20220813190902395](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813190902395.png)
+
+~~~python
+#三次多项式，不带与截距项相乘的x0
+PolynomialFeatures(degree=3,include_bias=False).fit_transform(X)
+~~~
+
+![image-20220813191307967](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813191307967.png)
+
+~~~python
+#为什么我们会希望不生成与截距相乘的x0呢？
+#对于多项式回归来说，我们已经为线性回归准备好了x0，但是线性回归并不知道
+xxx = PolynomialFeatures(degree=3).fit_transform(X)
+xxx.shape
+~~~
+
+![image-20220813191328206](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813191328206.png)
+
+~~~python
+rnd = np.random.RandomState(42) #设置随机数种子
+y = rnd.randn(3) y#生成了多少个系数？
+y
+~~~
+
+![image-20220813191542772](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813191542772.png)
+
+~~~python
+#生成了多少个系数？
+LinearRegression().fit(xxx,y).coef_
+~~~
+
+![](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813191634574.png)
+
+~~~python
+#查看截距
+LinearRegression().fit(xxx,y).intercept_
+~~~
+
+![image-20220813191756479](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813191756479.png)
+
+- 显然，查看的截距和生成的系数第一个不相等
+
+~~~python
+#发现问题了吗？线性回归并没有把多项式生成的x0当作是截距项
+#所以我们可以选择：关闭多项式回归中的include_bias
+#也可以选择：关闭线性回归中的fit_intercept
+#生成了多少个系数？
+LinearRegression(fit_intercept=False).fit(xxx,y).coef_
+~~~
+
+![image-20220813192008119](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192008119.png)
+
+~~~python
+#查看截距
+LinearRegression(fit_intercept=False).fit(xxx,y).intercept_
+~~~
+
+![image-20220813192044170](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192044170.png)
+
+所以此时，在四个特征的基础上加上了0，所以直接使用上述四个值。
+
+![image-20220813192220528](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192220528.png)
+
+~~~python
+X = np.arange(6).reshape(3, 2) 
+X
+~~~
+
+![image-20220813192523674](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192523674.png)
+
+~~~python
+#尝试二次多项式
+PolynomialFeatures(degree=2).fit_transform(X)
+~~~
+
+![image-20220813192612160](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192612160.png)
+
+![image-20220813192645748](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192645748.png)
+
+~~~python
+#尝试三次多项式
+PolynomialFeatures(degree=3).fit_transform(X)
+~~~
+
+![image-20220813192823683](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813192823683.png)
+
+~~~python
+PolynomialFeatures(degree=2).fit_transform(X)
+~~~
+
+![image-20220813200903097](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813200903097.png)
+
+~~~python
+PolynomialFeatures(degree=2,interaction_only=True).fit_transform(X) #对比之下，当interaction_only为True的时候，只生成交互项
+~~~
+
+![image-20220813200907943](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813200907943.png)
+
+![image-20220813200941027](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813200941027.png)
+
+~~~python
+#更高维度的原始特征矩阵
+X = np.arange(9).reshape(3, 3) 
+X
+~~~
+
+![image-20220813201048041](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201048041.png)
+
+~~~python
+PolynomialFeatures(degree=2).fit_transform(X)
+~~~
+
+![image-20220813201133125](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201133125.png)
+
+~~~python
+PolynomialFeatures(degree=3).fit_transform(X)
+~~~
+
+![image-20220813201148360](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201148360.png)
+
+~~~python
+X_ = PolynomialFeatures(degree=20).fit_transform(X)
+X_.shape
+~~~
+
+![image-20220813201241185](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201241185.png)
+
+![image-20220813201251628](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201251628.png)
+
+### 5.3.2多项式回归处理非线性问题
+
+~~~python
+from sklearn.preprocessing import PolynomialFeatures as PF
+from sklearn.linear_model import LinearRegression  #多元线性回归
+import numpy as np
+rnd = np.random.RandomState(42) #设置随机数种子
+X = rnd.uniform(-3, 3, size=100) 
+y = np.sin(X) + rnd.normal(size=len(X)) / 3 
+#将X升维，准备好放入sklearn中 
+X = X.reshape(-1,1) 
+#创建测试数据，均匀分布在训练集X的取值范围内的一千个点
+line = np.linspace(-3, 3, 1000, endpoint=False).reshape(-1, 1) #原始特征矩阵的拟合结果
+~~~
+
+~~~python
+#原始特征矩阵的拟合结果
+LinearR = LinearRegression().fit(X, y) 
+#对训练数据的拟合
+LinearR.score(X,y)
+~~~
+
+![image-20220813201845749](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201845749.png)
+
+~~~python
+#对测试数据的拟合
+LinearR.score(line,np.sin(line))
+~~~
+
+![image-20220813201929885](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813201929885.png)
+
+~~~python
+#多项式拟合，设定高次项
+d=5
+#进行高此项转换
+poly = PF(degree=d)
+X_ = poly.fit_transform(X)
+line_ = poly.fit_transform(line)
+#训练数据的拟合
+LinearR_ = LinearRegression().fit(X_, y)
+LinearR_.score(X_,y) #测试数据的拟合
+~~~
+
+![image-20220813202336625](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813202336625.png)
+
+~~~python
+#测试数据的拟合
+LinearR_.score(line_,np.sin(line))
+~~~
+
+![image-20220813202406496](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813202406496.png)
+
+- 如果我们将这个过程可视化：
+
+~~~python
+import matplotlib.pyplot as plt
+d=5 #和上面展示一致的建模流程
+LinearR = LinearRegression().fit(X, y) #直接多元线性回归
+X_ = PF(degree=d).fit_transform(X)
+LinearR_ = LinearRegression().fit(X_, y) #进行多项式回归
+line = np.linspace(-3, 3, 1000, endpoint=False).reshape(-1, 1)
+line_ = PF(degree=d).fit_transform(line) 
+#放置画布
+fig, ax1 = plt.subplots(1) 
+#将测试数据带入predict接口，获得模型的拟合效果并进行绘制
+ax1.plot(line, LinearR.predict(line), linewidth=2, color='green'
+         ,label="linear regression")
+ax1.plot(line, LinearR_.predict(line_), linewidth=2, color='red'
+         ,label="Polynomial regression") 
+#将原数据上的拟合绘制在图像上
+ax1.plot(X[:, 0], y, 'o', c='k') 
+#其他图形选项
+ax1.legend(loc="best")
+ax1.set_ylabel("Regression output")
+ax1.set_xlabel("Input feature")
+ax1.set_title("Linear Regression ordinary vs poly")
+plt.tight_layout()
+plt.show()
+~~~
+
+![image-20220813204521188](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813204521188.png)
+
+![image-20220813204607573](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813204607573.png)
+
+### 5.3.3 多项式回归的可解释性
+
+![image-20220813204958405](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220813204958405.png)
+
+~~~python
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+X = np.arange(9).reshape(3, 3) 
+X
+~~~
+
+![image-20220823145833811](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823145833811.png)
+
+~~~python
+poly = PolynomialFeatures(degree=5).fit(X) #升维
+#重要接口get_feature_names
+poly.get_feature_names() #调用升维之后的各个模型的名称
+~~~
+
+![image-20220823145932581](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823145932581.png)
+
+~~~python
+#使用加利佛尼亚房价数据集给大家作为例子，当我们有标签名称的时候，可以直接在接口get_feature_names()中输
+#入标签名称来查看新特征究竟是由原特征矩阵中的什么特征组成的：
+from sklearn.datasets import fetch_california_housing as fch
+import pandas as pd
+housevalue = fch()
+X = pd.DataFrame(housevalue.data) 
+y = housevalue.target
+X.columns = ["住户收入中位数","房屋使用年代中位数","平均房间数目"
+           ,"平均卧室数目","街区人口","平均入住率","街区的纬度","街区的经度"]
+poly = PolynomialFeatures(degree=2).fit(X,y)#有y？
+poly.get_feature_names(X.columns)#展示原始数据的几次方
+X.head()
+~~~
+
+![image-20220823150121594](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823150121594.png)
+
+![image-20220823150258641](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823150258641.png)
+
+~~~python
+X_ = poly.transform(X) #在这之后，我们依然可以直接建立模型，然后使用线性回归的coef_属性来查看什么特征对标签的影响最大
+reg = LinearRegression().fit(X_,y)
+coef = reg.coef_#相应的W系数
+coef
+~~~
+
+![image-20220823151140902](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823151140902.png)
+
+~~~python
+[*zip(poly.get_feature_names(X.columns),reg.coef_)]#[*]打开惰性对象
+~~~
+
+![image-20220823151214995](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823151214995.png)
+
+~~~python
+#放到dataframe中进行排序
+coeff = pd.DataFrame([poly.get_feature_names(X.columns),reg.coef_.tolist()]).T
+coeff.columns = ["feature","coef"]
+coeff.sort_values(by="coef")
+~~~
+
+![image-20220823151543503](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823151543503.png)
+
+![image-20220823151923479](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823151923479.png)
+
+~~~python
+#顺便可以查看一下多项式变化之后，模型的拟合效果如何了
+poly = PolynomialFeatures(degree=4).fit(X,y)
+X_ = poly.transform(X)
+reg = LinearRegression().fit(X,y)
+reg.score(X,y)
+~~~
+
+![image-20220823152126375](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823152126375.png)
+
+~~~python
+from time import time
+time0 = time()
+reg_ = LinearRegression().fit(X_,y)
+print("R2:{}".format(reg_.score(X_,y)))
+print("time:{}".format(time()-time0))
+~~~
+
+![image-20220823152253352](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823152253352.png)
+
+~~~python
+#放到dataframe中进行排序
+coeff = pd.DataFrame([poly.get_feature_names(X.columns),reg_.coef_.tolist()]).T
+coeff.columns = ["feature","coef"]
+coeff.sort_values(by="coef")
+~~~
+
+![image-20220823152831149](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823152831149.png)
+
+#### 使用其他模型
+
+~~~python
+#可见使用多元线性回归模型的方法效果并不是很好，说明数据并不是线性关系。
+~~~
+
+![image-20220823153157625](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823153157625.png)
+
+~~~python
+#假设使用其他模型？随机森林(非线性模型)：
+from sklearn.ensemble import RandomForestRegressor as RFR
+time0 = time()
+print("R2:{}".format(RFR(n_estimators=100).fit(X,y).score(X,y)))
+print("time:{}".format(time()-time0))
+
+~~~
+
+![image-20220823153348578](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823153348578.png)
+
+- 与多项式回归相比，随机森林虽然精度高，但是跑的太慢了。
+
+### **5.3.4** 线性还是非线性模型？
+
+![image-20220823155042219](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823155042219.png)
+
+![image-20220823155058959](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823155058959.png)
+
+![image-20220823155113263](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823155113263.png)
+
+![image-20220823155818277](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823155818277.png)
+
+# 支持向量机
 
 
-​     
+

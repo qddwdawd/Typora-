@@ -222,6 +222,18 @@ cv2.dasrtoaryAllWindows()
 
 而io.imread则可以用plt.imshow(img),plt.show()来展示。
 
+#### 想要灰度图像
+
+~~~python
+picture = cv2.imread(r"C:\Users\DELL\Desktop\work\picture\test.jpg")
+gray = cv2.cvtColor(picture,cv2.COLOR_BGR2GRAY)
+cv2.imshow('ersion',gray)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+~~~
+
+![image-20220823190750296](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823190750296.png)
+
 ***
 
 ## 插值：
@@ -448,7 +460,6 @@ cv2.destroyAllWindows()
 
 ~~~python
 median = cv2.medianBlur(img,5)
-
 cv2.imshow('median',median)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
@@ -460,22 +471,48 @@ cv2.destroyAllWindows()
 res = np.hstack(blur,aussian,median)
 print(res)
 cv2.imshow('median vs aveage',res)
-cv2.watiKay(0)
-cv2.destroaryAllWindows()
+cv2.watiKey(0)
+cv2.destroyAllWindows()
 ~~~
 
 ### 形态学-腐蚀操作
 
 ~~~python
 img = cv2.imread('dige.png')
-
-kernel = np.ones((5,5),np.unit8)
-erosion =cv2.erode(img,kernel,iterations = 1)
-
+kernel = np.ones((5,5),np.uint8) #卷积层
+erosion =cv2.erode(img,kernel,iterations = 1)#iterations 腐蚀1次
 cv2.imshow('ersion',erosion)
-cv2.watiKey(0)
-cv2.destroaryAllWindows()
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 ~~~
 
 - 腐蚀操作：首先取一个卷积核为（5，5），即单位操作空间。然后利用erode进行腐蚀操作，iterations为重复次数。
-- 原理：在腐蚀操作中，对于一个像素为（5，5）的卷积核中，如果存在颜色不同的黑白点，即像素值为0和255共同存在，则这个卷积核
+- 原理：在腐蚀操作中，对于一个像素为（5，5）的卷积核中，如果存在颜色不同的黑白点，即像素值为0和255共同存在，则这个卷积核将白色的进行腐蚀操作，即变成黑色。
+- 结果:尖刺消失。
+
+![image-20220823194425840](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823194425840.png)
+
+### 膨胀操作
+
+~~~python
+kernel = np.ones((5,5),np.uint8) #卷积层
+erosion =cv2.dilate(erosion,kernel,iterations = 1)#iterations膨胀1次，erosion是腐蚀完之后的图像。
+cv2.imshow('dilate',erosion)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+~~~
+
+- 结果：线条变粗。
+
+![image-20220823194341371](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823194341371.png)
+
+![image-20220823194623791](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823194623791.png)
+
+### 开运算与闭运算
+
+
+
+
+
+
+
