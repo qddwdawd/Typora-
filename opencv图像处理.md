@@ -234,6 +234,17 @@ cv2.destroyAllWindows()
 
 ![image-20220823190750296](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220823190750296.png)
 
+或者直接：
+
+~~~python
+picture = cv2.imread(r"C:\Users\DELL\Desktop\work\picture\test.jpg",cv2.COLOR_BGR2GRAY)
+cv2.imshow('ersion',picture)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+~~~
+
+
+
 ***
 
 ## 插值：
@@ -510,9 +521,129 @@ cv2.destroyAllWindows()
 
 ### 开运算与闭运算
 
+~~~python
+#开：先腐蚀，再膨胀
+img = cv2.imread('')
+kernel = np.ones((5,5),np.uint8)
+opening = cv2.morphologyEx(img,cv2.MORPH_OPEN,kernel)
+cv2.imshow('opening',opening)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+~~~
+
+~~~python
+#闭：先膨胀，再腐蚀
+img = cv2.imread('')
+kernel = np.ones((5,5),np.uint8)
+closing= cv2.morphologyEx(img,cv2.MORPH_CLOSE,kernel)
+cv2.imshow('closing',vlosing)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+~~~
+
+## 梯度运算
+
+![image-20220824095308118](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824095308118.png)
+
+![image-20220824095333769](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824095333769.png)
 
 
 
+### 礼帽和黑帽
+
+![image-20220824095653917](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824095653917.png)
+
+- 礼帽结果：
+- ![image-20220824095727149](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824095727149.png)
+- 黑帽结果：
+- ![image-20220824095834864](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824095834864.png)
+
+## 图像梯度-Sobel算子
+
+![image-20220824100159954](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824100159954.png)
+
+![image-20220824100430566](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824100430566.png)
+
+- Gx水平梯度，Gy数值梯度。来算取像素点之间的差异。
+
+![image-20220824100731140](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824100731140.png)
+
+~~~python
+sobelx = cv2.Sobel(img,cv2.CV_64F,1,0,ksize = 3)#img是传入的图片，cv2.cv_64F是一种更高级的操作，将其表现为负的结果。dx=1算的是水平的，dy=0表示不算竖直的梯度。
+cv_show =(sobelx,'sobelx')
+~~~
+
+![image-20220824101143780](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101143780.png)
 
 
+
+![image-20220824101333711](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101333711.png)
+
+由于右边黑减白必是负值，opencv截断操作变为0，而后变为黑色。
+
+![image-20220824101838092](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101838092.png)
+
+- 进行一个绝对值转换，convertScaleAbs。
+
+![image-20220824101654005](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101654005.png)
+
+接下来算Y：
+
+![image-20220824101845212](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101845212.png)
+
+![image-20220824101829069](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101829069.png)
+
+![image-20220824101915822](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824101915822.png)
+
+- 0.5是权重，偏置项为一般为0。
+
+![image-20220824102017507](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824102017507.png)
+
+![image-20220824102249659](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824102249659.png)
+
+![image-20220824102304218](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824102304218.png)
+
+## 图像梯度-Scharr算子
+
+![image-20220824103536274](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824103536274.png)
+
+## 图像梯度-laplacian算子
+
+![image-20220824103600131](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824103600131.png)
+
+
+
+- 不同算子之间的比较：
+
+![image-20220824104109603](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824104109603.png)
+
+![image-20220824104117633](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824104117633.png)
+
+# Canny边缘检测
+
+![image-20220824104420139](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824104420139.png)
+
+![image-20220824110115776](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110115776.png)
+
+![image-20220824110151258](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110151258.png)
+
+![image-20220824110230311](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110230311.png)
+
+![image-20220824110259497](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110259497.png)
+
+![image-20220824110726106](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110726106.png)
+
+
+
+![image-20220824110815017](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824110815017.png)
+
+![image-20220824111136810](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824111136810.png)
+
+- (80,150)代表的是自己设定的梯度最大值最小值。
+
+![image-20220824111353598](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824111353598.png)
+
+![image-20220824111404477](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824111404477.png)
+
+![image-20220824111419748](https://wuxidixi.oss-cn-beijing.aliyuncs.com/img/image-20220824111419748.png)
 
