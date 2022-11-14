@@ -10,7 +10,7 @@
 
 - numpy重在数值计算，也是大部分python科学计算库的基础库，多用于大型，多维数组上执行数值运算。
 
-## numpy创建数组(矩阵)
+## numpy创建数组
 
 ~~~python
 import numpy as np

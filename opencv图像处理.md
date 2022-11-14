@@ -71,9 +71,7 @@ plt.show()#plt.show()则是将plt.imshow()处理后的函数显示出来
 axis=0：上下翻转，意味着把行看成整体，行的顺序发生颠倒，每一行的元素不发生改变。(及镜像转换)(numpy 矩阵左右翻转/上下翻转)
 
 ~~~python
-img1 = np.flip(img,axis=0) #将数组进行行的颠倒
-plt.imshow(img1)
-plt.show()
+a
 ~~~
 
 axis=1：左右翻转，意味着把列看成整体，列的顺序发生颠倒，每一列的元素不发生改变。
@@ -328,7 +326,7 @@ img = cv2.imread('cat.jpg',cv2.IMREAD_GRAYSCALE)#第二参数表示的是读取�
 vc = cv2.VideoCapture('text.mp4')#指定视频路径
 #检查打开是否正确
 if vc.isOpened():
-    open,farme = vc.read( )#open会返回一个值，如果设一个循环，vc.read()指的是先读取第一帧，而后读取第二帧，而后继续。这个表达式会返回两个值，第一个为bool类型的值，如果打开open就会返回Ture否则就会返回False，第二个参数为这一帧的图像，且返回到False中。
+    open,frme = vc.read( )#open会返回一个值，如果设一个循环，vc.read()指的是先读取第一帧，而后读取第二帧，而后继续。这个表达式会返回两个值，第一个为bool类型的值，如果打开open就会返回Ture否则就会返回False，第二个参数为这一帧的图像，且返回到False中。
 else:
     open = False
 ~~~
@@ -489,12 +487,7 @@ cv2.destroyAllWindows()
 ### 形态学-腐蚀操作
 
 ~~~python
-img = cv2.imread('dige.png')
-kernel = np.ones((5,5),np.uint8) #卷积层
-erosion =cv2.erode(img,kernel,iterations = 1)#iterations 腐蚀1次
-cv2.imshow('ersion',erosion)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+A
 ~~~
 
 - 腐蚀操作：首先取一个卷积核为（5，5），即单位操作空间。然后利用erode进行腐蚀操作，iterations为重复次数。

@@ -1,4 +1,4 @@
-  # 基于Pytorth的Yolov5目标检测环境配置
+  # 基于Pytorch的Yolov5目标检测环境配置
 
 （先检测你的GPU是否能够正常使用）
 
